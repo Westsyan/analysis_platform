@@ -1,0 +1,41 @@
+@()(implicit session: Session)
+<style>
+    #drop:hover,#new:hover,#logout:hover {
+        background-color: #F0F0F0;
+    }
+</style>
+
+<div class="page-header navbar navbar-fixed-top" style="background-color: #239FFD">
+        <!-- BEGIN HEADER INNER -->
+    <div class="page-header-inner">
+            <!-- BEGIN LOGO -->
+        <div class="page-logo">
+            <div class="menu-toggler sidebar-toggler hide">
+            </div>
+        </div>
+        <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse">
+        </a>
+        <div class="top-menu" >
+            <ul class="nav navbar-nav pull-right" style="background-color: #239FFD">
+                <li class="dropdown dropdown-user" >
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true"
+                        style="height: 56px;">
+                        <span class="username username-hide-on-mobile">
+                            @session.get("user") </span>
+                        <i class="fa fa-angle-down"></i>
+                    </a>
+                    <ul class="dropdown-menu" style="margin-top: 10px;">
+                        <li>
+
+                        </li>
+                        <li id="drop">
+                            <a href="@routes.LoginController.logout()" id="logout"
+                            style="font-size: 16px;margin-left: 1em;color: #888888;">
+                                <i class="fa fa-user"></i> &nbsp; 退出登录 </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

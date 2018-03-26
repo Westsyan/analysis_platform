@@ -1,0 +1,30 @@
+@(projectName:Seq[String])
+<div class="page-sidebar-wrapper">
+	<div class="page-sidebar navbar-collapse collapse"  style="background-color: #5B616A;">
+		<ul class="page-sidebar-menu page-sidebar-menu-hover-submenu" data-auto-scroll="true" data-slide-speed="200" id="projects">
+
+			<li class="sidebar-toggler-wrapper">
+				<a href="@routes.UploadController.home">
+						&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-home" style="font-size: 16px;color: #888888;"></i>
+					<input type="button"style="border: none;
+						color: #888888;font-size: 16px;margin-top: 5px;background-color: transparent;" value="项目管理"/>
+				</a>
+
+			</li>
+			<li style="height: 1px"></li>
+			@for(i <- projectName){
+				<li>
+					<a href='/project/uploadFile?projectname=@i'>
+						<i class='fa fa-bar-chart-o'></i>
+						<span class='title'>@i</span>
+						<span class='selected'></span>
+					</a>
+				</li>
+			}
+
+		</ul>
+	</div>
+</div>
+
+
+

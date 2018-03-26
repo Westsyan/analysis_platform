@@ -1,0 +1,117 @@
+@adminAndLogin.main(""){
+
+        <div class="col-sm-12">
+            <section class="main-col" style="margin: 0 auto;">
+                <div class="register">
+                    <h2 class="page-heading" style="font-size: 25px;">登录账户</h2>
+                    <form id="loginForm" style="max-width: 320px;" class="registration-form" accept-charset="UTF-8" action="/back/toIndex" >
+
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><em
+                                class="fa fa-user icon2x"></em>
+                                </span>
+                                <input id="account" name="account" placeholder="账号" autofocus="autofocus" type="text" class="form-control" required value=""/>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><em
+                                class="fa fa-key icon2x"></em>
+                                </span>
+                                <input id="password" name="password" placeholder="密码" type="password" autofocus="autofocus" class="form-control" required value="" maxlength="30"/>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><em
+                                class="fa fa-check icon2x"></em>
+                                </span>
+                                <input type = "text" id = "input" placeholder="验证码" autofocus="autofocus" class="form-control" required style="width: 200px;"/>
+                                <input type = "button" id="code" onclick="createCode()"style="width: 60px;height: 42px;margin-left: 5px" />
+                            </div>
+                        </div>
+
+                        <div class="actions">
+                            <button type="button" onclick="validate()" class="btn btn-primary" style="width: 150px;height: 40px" id="search">登 录</button>
+                            <a href="/home/sign" style="color: white"><button type="button" class="btn btn-primary" style="width: 150px;height: 40px;margin-left: 15px;"  id="search">
+                                注 册</button></a>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+
+
+
+    <script>
+
+var code ; //在全局定义验证码
+//产生验证码
+window.onload = function createCode() {
+    code = "";
+    var codeLength = 4;//验证码的长度
+    var checkCode = document.getElementById("code");
+    var random = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);//随机数
+    for (var i = 0; i < codeLength; i++) {//循环操作
+        var index = Math.floor(Math.random() * 10);//取得随机数的索引（0~35）
+        code += random[index];//根据索引取得随机数加到code上
+    }
+    checkCode.value = code;//把code值赋给验证码
+}
+
+function createCode() {
+    code = "";
+    var codeLength = 4;//验证码的长度
+    var checkCode = document.getElementById("code");
+    var random = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);//随机数
+    for (var i = 0; i < codeLength; i++) {//循环操作
+        var index = Math.floor(Math.random() * 10);//取得随机数的索引（0~35）
+        code += random[index];//根据索引取得随机数加到code上
+    }
+    checkCode.value = code;//把code值赋给验证码
+}
+
+//校验验证码
+function validate() {
+
+    var inputCode = document.getElementById("input").value; //取得输入的验证码并转化为大写
+    if (inputCode != code) { //若输入的验证码与产生的验证码不一致时
+        swal({
+            title: "错误!",
+            text: "验证码输入错误！",
+            type: "error",
+            confirmButtonText: "确定"
+        })
+        createCode();//刷新验证码
+        document.getElementById("input").value = "";//清空文本框
+    }
+    else { //输入正确时
+
+        $.ajax({
+            url: "@routes.LoginController.login()",
+            type: "get",
+            dataType: "json",
+            data: $("#loginForm").serialize(),
+            success: function (data) {
+                if(data.valid == "false"){
+                    swal({
+                        title: "错误!",
+                        text: data.message,
+                        type: "error",
+                        confirmButtonText: "确定"
+                    })
+                }else{
+                    $("#loginForm").submit();
+                }
+            }
+        });
+
+    }
+}
+
+</script>
+}

@@ -1,0 +1,284 @@
+@import models.Tables.ProjectRow
+@(project: Seq[ProjectRow],projectname : Seq[String])(implicit session: Session)
+@background.main("")(projectname) {
+
+    <style>
+            .borders {
+                width: 300px;
+                height: 200px;
+                border: 1px solid #EAECEE;
+                border-radius: 10px 10px 10px 10px;
+                margin: 50px 50px 50px 50px;
+                float: left;
+            }
+        .header{
+            width: 200px;
+            height: 45px;
+            border-radius: 15px 15px 15px 15px;
+            margin: 50px 50px 50px 50px;
+            font-size: 30px;
+            background-color: transparent;
+            color: gray;
+            border: 0px;
+
+        }
+        .header:hover{
+            border: 1px solid #EAECEE;
+            background-color: lightgrey;
+        }
+        .delete{
+            background-color: white;
+            border: 0px;
+            font-size: 20px;
+            float: right;
+            margin-right: 10px;
+            margin-top: -10px;
+            color: lightgrey;
+        }
+
+        .delete:hover{
+            border: solid 1px;
+            border-color: lightgrey;
+            border-radius: 5px 5px 5px 5px;
+            color: red;
+        }
+    </style>
+
+    <div class="page-content-wrapper">
+
+        <div class="page-content">
+
+            <div class="row-fluid">
+
+                <div class="row">
+                    <div class="col-md-12 col-sm-12">
+
+                            <button class="header" onclick="insertGroup()" >
+                            <i class="fa fa-plus"></i>新建项目
+                            </button>
+
+                        <div style="margin-left: 50px;">
+
+                            <div class="borders">
+                                <div style="margin-left: 2em;">
+                                    <button class="delete">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                    <h3><a href="#">项目一</a></h3>
+                                    <p style="margin-top: 20px;">项目说明：Reviews, what to watch, commentary, and more</p>
+                                    <div>样品数量：<b>2,281</b></div>
+                                    <div style="margin-top: 5px;">创建日期：<b>2018年3月23日</b></div>
+                                </div>
+                            </div>
+
+                            <div class="borders">
+                                <div style="margin-left: 2em;">
+                                    <button class="delete">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                    <h3><a href="#">项目一</a></h3>
+                                    <p style="margin-top: 20px;">项目说明：Reviews, what to watch, commentary, and more</p>
+                                    <div>样品数量：<b>2,281</b></div>
+                                    <div style="margin-top: 5px;">创建日期：<b>2018年3月23日</b></div>
+                                </div>
+                            </div>
+
+                            <div class="borders">
+                                <div style="margin-left: 2em;">
+                                    <button class="delete">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                    <h3><a href="#">项目一</a></h3>
+                                    <p style="margin-top: 20px;">项目说明：Reviews, what to watch, commentary, and more</p>
+                                    <div>样品数量：<b>2,281</b></div>
+                                    <div style="margin-top: 5px;">创建日期：<b>2018年3月23日</b></div>
+                                </div>
+                            </div>
+
+                            <div class="borders">
+                                <div style="margin-left: 2em;">
+                                    <button class="delete">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                    <h3><a href="#">项目一</a></h3>
+                                    <p style="margin-top: 20px;">项目说明：Reviews, what to watch, commentary, and more</p>
+                                    <div>样品数量：<b>2,281</b></div>
+                                    <div style="margin-top: 5px;">创建日期：<b>2018年3月23日</b></div>
+                                </div>
+                            </div>
+
+                            <div class="borders">
+                                <div style="margin-left: 2em;">
+                                    <button class="delete">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                    <h3><a href="#">项目一</a></h3>
+                                    <p style="margin-top: 20px;">项目说明：Reviews, what to watch, commentary, and more</p>
+                                    <div>样品数量：<b>2,281</b></div>
+                                    <div style="margin-top: 5px;">创建日期：<b>2018年3月23日</b></div>
+                                </div>
+                            </div>
+
+                            <div class="borders">
+                                <div style="margin-left: 2em;">
+                                    <button class="delete">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                    <h3><a href="#">项目一</a></h3>
+                                    <p style="margin-top: 20px;">项目说明：Reviews, what to watch, commentary, and more</p>
+                                    <div>样品数量：<b>2,281</b></div>
+                                    <div style="margin-top: 5px;">创建日期：<b>2018年3月23日</b></div>
+                                </div>
+                            </div>
+
+                            <div class="borders">
+                                <div style="margin-left: 2em;">
+                                    <button class="delete">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                    <h3><a href="#">项目一</a></h3>
+                                    <p style="margin-top: 20px;">项目说明：Reviews, what to watch, commentary, and more</p>
+                                    <div>样品数量：<b>2,281</b></div>
+                                    <div style="margin-top: 5px;">创建日期：<b>2018年3月23日</b></div>
+                                </div>
+                            </div>
+
+                            <div class="borders">
+                                <div style="margin-left: 2em;">
+                                    <button class="delete">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                    <h3><a href="#">项目一</a></h3>
+                                    <p style="margin-top: 20px;">项目说明：Reviews, what to watch, commentary, and more</p>
+                                    <div>样品数量：<b>2,281</b></div>
+                                    <div style="margin-top: 5px;">创建日期：<b>2018年3月23日</b></div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div id="addModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width: 600px">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                    <h4 class="modal-title">
+                        <i class="fa fa-plus"></i>
+                        <span id="lblAddTitle" style="font-weight: bold">新建项目：</span>
+                    </h4>
+                </div>
+                <form id="form" data-toggle="validator">
+                    <div class="modal-body">
+                        <div class="row-fluid">
+
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            项目名称: </label>
+                                        <input class="form-control" name="projectname" id="projectname" >
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="groupContent">
+                                <div class='row'>
+                                    <div class="col-sm-10">
+                                        <div class='form-group'>
+                                            <label class='control-label'>项目描述：</label>
+                                            <textarea class='form-control' style="border-radius: 4px" rows="6"
+                                            name='description' id='description' required='required'></textarea>
+                                        </div>
+                                    </div>
+                                </div></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-info">
+                        <input type="hidden" id="ID" name="ID" />
+                        <button type="submit" class="btn blue" onclick="addProject()">确定</button>
+                        <button type="button" class="btn green" data-dismiss="modal">取消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+
+            $(function () {
+                formValidation();
+            })
+
+            function insertGroup() {
+                $("#addModal").modal("show")
+            }
+
+            function formValidation() {
+                $('#form').formValidation({
+                    framework: 'bootstrap',
+                    icon: {
+                        valid: 'glyphicon glyphicon-ok',
+                        invalid: 'glyphicon glyphicon-remove',
+                        validating: 'glyphicon glyphicon-refresh'
+                    },
+                    fields: {
+                        projectname: {
+                            validators: {
+                                notEmpty: {
+                                    message: '项目名不能为空!'
+                                },
+                                remote: {
+                                    type: 'POST',
+                                    url: '/project/checkProjectname',
+                                    delay: 2000
+                                },
+                            }
+                        },
+                    }
+                })
+            }
+
+
+            function addProject() {
+                var form = $("#form")
+                var fv = form.data("formValidation")
+                fv.validate()
+                if (fv.isValid()) {
+                    $.ajax({
+                        url: "@routes.LoginController.addProject()",
+                        type: "get",
+                        data: $("#form").serialize(),
+                        success: function (data) {
+                            if (data.valid == "true") {
+                                $("#addModal").modal("hide")
+                                swal({
+                                            title:"成功！",
+                                            text:"新建项目成功！",
+                                            type:"success"
+                                        },function(){
+                                            location.reload();
+                                        }
+                                )
+                            }
+                        }
+                    });
+                }
+
+            }
+
+
+
+    </script>
+
+
+
+}
