@@ -1,0 +1,418 @@
+@(projectName: Seq[String], proname: String)(implicit session: Session)
+@fileupload.main(proname, projectName, proname) {
+
+    <style>
+            label {
+                text-indent: 2em;
+            }
+
+    </style>
+
+    <div class="row-fluid">
+
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <div class="portlet blue-soft box">
+
+                    <div class="portlet-title">
+                        <div class="caption">
+                            OTU
+                        </div>
+                    </div>
+
+                    <div class="portlet-body">
+
+                        <form class="registration-form form-horizontal" id="UpdateForm"
+                        accept-charset="UTF-8">
+
+                            <div class="form-group">
+                                <h4 class="col-sm-12">任务信息:</h4>
+                            </div>
+
+                            <div class="form-group" style="display: none;">
+                                <div class="col-sm-6 indent">
+                                    <input name="proname" id="proname" class="form-control" value="@proname" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-12">任务名:</label>
+                                <div class="col-sm-6 indent">
+                                    <input name="otuname" id="otuname" class="form-control" />
+                                    <small style="color: red;
+                                        display: none;" id="remote" class="help-block" data-fv-validator="callback" data-fv-for="sample[]" data-fv-result="INVALID">
+                                        任务名重复！</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-12">请选择样品名:</label>
+                                <div class="col-sm-6 indent">
+                                    <select name="sample[]" id="sample" class="checkbox form-control phenotypeName" multiple></select>
+                                </div>
+                                <div class="col-sm-2" style="margin-top: 5px;">
+                                    <input type="checkbox" id="checkbox" style="float: left">选择所有样品
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <h4 class="col-sm-12">参数设置:</h4>
+                            </div>
+
+                            <div class="form-group">
+                                <h5 style="margin-left: 2em;">Usearch otu cluster and mapping
+                                    <a id="down-1" style="margin-left: 2em">
+                                        <i class="fa fa-arrow-down"></i>
+                                    </a>
+                                    <a id="up-1" style="margin-left: 2em;
+                                        display: none">
+                                        <i class="fa fa-arrow-up"></i>
+                                    </a>
+                                </h5>
+                            </div>
+
+                            <div id="set-1" style="display: none">
+
+
+                                <div class="form-group" >
+                                    <label class="col-sm-7">
+                                        Usearch 'derep_prefix' command: Specify the minimum sequence length to be included in the output.</label>
+                                    <div class="col-sm-6 indent">
+                                        <input name="minseqlength" id="minseqlength" class="form-control" value="200" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group" >
+                                    <label class="col-sm-7">
+                                        Usearch 'cluster_otus' command: Specifies the OTU 'radius' as a percentage, i.e. the minimum difference between an OTU member sequence and the representative sequence of that OTU. Default is 3.0, corresponding to a minimum identity of 97%.</label>
+                                    <div class="col-sm-6 indent">
+                                        <input name="otu_radius_pct" id="otu_radius_pct" class="form-control" value="3.0" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group" >
+                                    <label class="col-sm-7">
+                                        Usearch 'usearch_global' command: Specifies the minimum identity between a query sequence(raw data) and a database sequence(otu representative sequence)</label>
+                                    <div class="col-sm-6 indent">
+                                        <input name="id" id="id" class="form-control" value="0.97" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-12">
+                                        cluster_otus(cluster) and usearch_global(mapping) strand:</label>
+                                    <div class="col-sm-6 indent">
+                                        <select class="form-control" name="strand">
+                                            <option value="plus" selected>plus</option>
+                                            <option value="both">both</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="form-group">
+                                <h5 style="margin-left: 2em;">RDP classifier assign taxonomy
+                                    <a id="down-2" style="margin-left: 2em">
+                                        <i class="fa fa-arrow-down"></i>
+                                    </a>
+                                    <a id="up-2" style="margin-left: 2em;
+                                        display: none">
+                                        <i class="fa fa-arrow-up"></i>
+                                    </a>
+                                </h5>
+                            </div>
+
+                            <div id="set-2" style="display: none">
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-12">
+                                        Taxon assignment method:</label>
+                                    <div class="col-sm-6 indent">
+                                        <select class="form-control" name="method" onchange="change(this)">
+                                            <option value="rdp" selected>RDP Classifier</option>
+                                            <option value="uclust">Uclust consensus taxonomy assigner</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div id="rdp-1">
+                                    <div class="form-group" >
+                                        <label class="col-sm-7">
+                                            Minimum confidence to record an assignment, used for rdp method </label>
+                                        <div class="col-sm-6 indent">
+                                            <input name="c" id="c" class="form-control" value="0.7" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="uclust-1" style="display: none;">
+                                    <div class="form-group" >
+                                        <label class="col-sm-7">
+                                            Number of database hits to consider when making an assignment, used for uclust method </label>
+                                        <div class="col-sm-6 indent">
+                                            <input name="uma" id="uma" class="form-control" value="3" />
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group" >
+                                        <label class="col-sm-7">
+                                            Minimum percent similarity (expressed as a fraction between 0 and 1) to consider a database match a hit, used for uclust method </label>
+                                        <div class="col-sm-6 indent">
+                                            <input name="s" id="s" class="form-control" value="0.9" />
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class = "actions col-sm-offset-1 col-sm-4">
+                                    <button type="button" class="btn btn-primary" style="width: 90%;" id="search" onclick="Running()">
+                                        应用</button>
+                                </div>
+                            </div>
+                        </form>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+
+
+            $("#sample").select2();
+
+            $("#checkbox").click(function () {
+                if ($("#checkbox").is(':checked')) {
+                    $("#sample > option").prop("selected", "selected");// Select All Options
+                    $("#sample").trigger("change");// Trigger change to select 2
+                } else {
+                    $("#sample > option").removeAttr("selected");
+                    $("#sample").trigger("change");// Trigger change to select 2
+                }
+            });
+
+
+            $(function () {
+
+                $.ajax({
+                    url: "/project/getAllSampleName?proname=@proname",
+                    type: "post",
+                    success: function (data) {
+                        $("#sample").select2(
+                                {
+                                    placeholder: "选择样品",
+                                    data: data,
+                                    closeOnSelect: false,
+                                }
+                        );
+                    }
+                });
+
+
+                $.ajax({
+                    url: "/project/getTime",
+                    type: "post",
+                    success: function (data) {
+                        $("#otuname").val(data.date + "_OTU");
+                    }
+                });
+
+                formValidation();
+            });
+
+
+            function formValidation() {
+                $('#UpdateForm').formValidation({
+                    framework: 'bootstrap',
+                    icon: {
+                        valid: 'glyphicon glyphicon-ok',
+                        invalid: 'glyphicon glyphicon-remove',
+                        validating: 'glyphicon glyphicon-refresh'
+                    },
+                    fields: {
+                        otuname: {
+                            validators: {
+                                notEmpty: {
+                                    message: '不能为空!'
+                                }
+                            }
+                        },
+                        'sample[]': {
+                            validators: {
+                                callback: {
+                                    message: '请至少选择一个样品表型！',
+                                    callback: function (value, validator, $field) {
+                                        // Get the selected options
+                                        var options = validator.getFieldElements('sample[]').val();
+                                        return (options != null
+                                                && options.length >= 1);
+                                    }
+                                }
+                            }
+                        },
+                        minseqlength: {
+                            validators: {
+                                integer: {
+                                    message: '必须为整数！'
+                                },
+                                between: {
+                                    min: 0,
+                                    max: 99999999999,
+                                    message: "必须大于0！"
+                                }
+                            }
+                        },
+                        otu_radius_pct: {
+                            validators: {
+                                numeric: {
+                                    message: '必须为数字'
+                                },
+                                between: {
+                                    min: 0,
+                                    max: 100,
+                                    message: "范围：0 - 100！"
+                                }
+                            }
+                        },
+                        id: {
+                            validators: {
+                                numeric: {
+                                    message: '必须为数字'
+                                },
+                                between: {
+                                    min: 0,
+                                    max: 1,
+                                    message: "范围：0 - 1！"
+                                }
+                            }
+                        },
+                        c: {
+                            validators: {
+                                numeric: {
+                                    message: '必须为数字'
+                                },
+                                between: {
+                                    min: 0,
+                                    max: 1,
+                                    message: "范围：0 - 1！"
+                                }
+                            }
+                        },
+                        uma: {
+                            validators: {
+                                integer: {
+                                    message: '必须为整数'
+                                },
+                                between: {
+                                    min: 1,
+                                    max: 99999999999,
+                                    message: "最小值为1！"
+                                }
+                            }
+                        },
+                        s: {
+                            validators: {
+                                numeric: {
+                                    message: '必须为数字'
+                                },
+                                between: {
+                                    min: 0,
+                                    max: 1,
+                                    message: "范围：0 - 1！"
+                                }
+                            }
+                        }
+                    }
+                })
+            }
+
+            $("#down-1").click(function () {
+                $("#set-1").show();
+                $("#down-1").hide();
+                $("#up-1").show()
+            });
+
+            $("#up-1").click(function () {
+                $("#set-1").hide();
+                $("#down-1").show();
+                $("#up-1").hide()
+            });
+
+            $("#down-2").click(function () {
+                $("#set-2").show();
+                $("#down-2").hide();
+                $("#up-2").show()
+            });
+
+            $("#up-2").click(function () {
+                $("#set-2").hide();
+                $("#down-2").show();
+                $("#up-2").hide()
+            });
+
+            function change(element) {
+                var value = $(element).find(">option:selected").val()
+                if (value == "rdp") {
+                    $("#rdp-1").show()
+                    $("#uclust-1").hide()
+                } else {
+                    $("#rdp-1").hide()
+                    $("#uclust-1").show()
+                }
+            }
+
+
+
+
+            function Running() {
+                var form = $("#UpdateForm");
+                var fv = form.data("formValidation");
+                fv.validate();
+                var x = $("#otuname").value;
+                console.log(x);
+                if (fv.isValid()) {
+                    var index = layer.load(1, {
+                        shade: [0.1, '#fff']
+                    });
+                    $.ajax({
+                        url: "@routes.OtuController.checkName(proname)",
+                        type: "post",
+                        dataType: "json",
+                        data: $("#UpdateForm").serialize(),
+                        success: function (data) {
+                            if (data.valid == "false") {
+                                $("#remote").show();
+                                layer.close(index);
+                            } else {
+                                $.ajax({
+                                    url: "@routes.OtuController.saveDeploy()",
+                                    type: "post",
+                                    dataType: "json",
+                                    data: $("#UpdateForm").serialize(),
+                                    success: function (data1) {
+                                        layer.close(index);
+                                        if (data1.valid == "true") {
+                                            var id = data1.id;
+                                            window.location.replace("/project/otuPage?proname=@proname&id=" + id)
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+
+    </script>
+}

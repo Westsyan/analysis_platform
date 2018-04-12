@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 import org.apache.commons.io.FileUtils
+import org.joda.time.DateTime
 import play.api.mvc.{AnyContent, Request}
 
 /**
@@ -45,19 +46,39 @@ object Utils {
     header.filter(_._1 == "Referer").map(_._2).head.head
   }
 
-  def date : String = {
+  def date : DateTime = {
     val now = new Date()
-    val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
-    val date = dateFormat.format(now)
+    val dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+    val time = dateFormat.format(now)
+    val date = new DateTime(dateFormat.parse(time).getTime)
     return date
   }
 
+  def date2 : String = {
+    val now = new Date()
+    val dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")
+    val date = dateFormat.format(now)
+    date
+  }
 
+  def outPath(userId:Int,proId:Int,sampleId:Int) : String ={
+   val out = path + "/" + userId + "/" + proId + "/data/" + sampleId
+    out
+  }
 
+  def otuPath(userId:Int,proId:Int,taskId:Int) : String ={
+    val out = path + "/" + userId + "/" + proId + "/otu/" + taskId
+    out
+  }
 
   val windowsPath = "F:/analysis_data"
-  val linuxPath = "/root/projects/analysis_data/"
+  val linuxPath = "/home/user/software/analysis_data"
   val path = {
-    if (new File(windowsPath).exists()) windowsPath else linuxPath
+    if (new File(windowsPath).exists()) windowsPath+"/data" else linuxPath+"/data"
   }
+
+  val toolPath ={
+    if (new File(windowsPath).exists()) windowsPath+"/tools" else linuxPath+"/tools"
+  }
+
 }

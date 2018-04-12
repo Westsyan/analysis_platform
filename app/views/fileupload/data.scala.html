@@ -1,0 +1,415 @@
+@import models.Tables.SampleRow
+@(sample: Seq[SampleRow], projectName: Seq[String], proname: String, samp: String)(implicit session: Session)
+@fileupload.main(proname, projectName, proname) {
+
+    <style>
+            .update {
+                border-radius: 15px 15px 15px 15px;
+                background-color: transparent;
+                color: gray;
+                border: 0px;
+            }
+
+            .update:hover {
+                color: gray;
+                background-color: lightgray;
+            }
+
+            .fastq {
+                background-color: transparent;
+                color: gray;
+                border: 0px;
+            }
+
+            .fastq:hover {
+                color: black;
+                text-decoration: underline;
+            }
+
+            .delete {
+                border-radius: 15px 15px 15px 15px;
+                background-color: transparent;
+                color: gray;
+                border: 0px;
+            }
+
+            .delete:hover {
+                color: white;
+                background-color: red;
+            }
+
+            .state {
+                display: none;
+            }
+        .layui-layer-title{
+            background-color: #428BCA;
+            height: 55px;
+        }
+    </style>
+
+
+    <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <div class="portlet blue-madison box">
+
+                <div class="portlet-title">
+                    <div class="caption">
+                        样品管理
+                    </div>
+                </div>
+
+
+                <div class="portlet-body" id="t">
+
+                    <div class="table-responsive" >
+
+                        <table class="display table table-bordered table-hover table-striped" id="table" data-pagination="true" data-search="true"
+                        data-search-align="left" data-page-list="[10, 25, 50, 100]" data-multiple-search="true">
+
+                            <thead>
+                                <tr>
+                                    <th data-field="sample" data-sortable="true" id="sample">样品名</th>
+                                    <th data-field="seqs" data-sortable="true" id="seqs">有效序列数</th>
+                                    <th data-field="createdate" data-sortable="true" id="createdata">添加时间</th>
+                                    <th data-field="state" data-sortable="true" id="state">运行状态</th>
+                                    <th data-field="results" data-sortable="false" id="results">下载文件</th>
+                                    <th data-field="operation" data-sortable="false" id="operation">操作</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="update" class="modal fade modal-margin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width: 600px;">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                    <h4 class="modal-title">
+                        <span id="lblAddTitle" style="font-weight: bold">修改样品名：</span>
+                    </h4>
+                </div>
+                <form id="updateForm" data-toggle="validator">
+                    <div class="modal-body">
+                        <div class="row-fluid">
+
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            样品名：
+                                        </label>
+                                        <input class="form-control indent" id="samplename" name="samplename" readonly="readonly" >
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-8" style="display: none;" >
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            ID：
+                                        </label>
+                                        <input class="form-control indent" id="sampleId" name="sampleId" readonly="readonly" >
+                                    </div>
+                                </div>
+
+
+                                <div class="col-sm-8">
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            新的样品名: </label>
+                                        <input class="form-control indent" name="newsample" id="newsample" >
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-info">
+                        <button type="submit" class="btn blue" onclick="sureUpdate()">确定</button>
+                        <button type="button" class="btn green" data-dismiss="modal">取消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="rest" class="modal fade modal-margin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width: 1000px;">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                    <h4 class="modal-title">
+                        <span id="lblAddTitle" style="font-weight: bold">设置参数：</span>
+                    </h4>
+                </div>
+                <form id="resetForm" data-toggle="validator" class="registration-form form-horizontal">
+                    <div class="modal-body">
+                        <div class="row-fluid" id="deploy">
+
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-info">
+                        <button type="button" class="btn blue" onclick="Running()">确定</button>
+                        <button type="button" class="btn green" data-dismiss="modal">取消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="logShow" class="modal fade modal-margin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width: 1000px;">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                    <h4 class="modal-title">
+                        <span id="lblAddTitle" style="font-weight: bold">日志信息：</span>
+                        <button type="button" class="btn-remove" data-dismiss="modal" ><i class="fa fa-remove"></i></button>
+                    </h4>
+                </div>
+                    <div class="modal-body">
+                        <div class="row-fluid" id="logInfo">
+
+                        </div>
+                    </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteShow" class="modal fade modal-margin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="margin-top: 200px;">
+        <div class="modal-dialog" style="width: 400px;">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h4 class="modal-title" align="center" id="title1">
+                        <span id="deleteTitle" style="font-weight: bold">删除样品
+                        <b id="dsample">
+
+                        </b>
+                        </span>
+                    </h4>
+                    <h4 class="modal-title" align="center" id="title2" style="display: none">
+                        <span id="deleteTitle" style="font-weight: bold">删除中...</span>
+                    </h4>
+                    <h4 class="modal-title" align="center" id="title3" style="display: none">
+                        <span id="deleteTitle" style="font-weight: bold">删除成功</span>
+                    </h4>
+                </div>
+                <div class="row-fluid" align="center" >
+                    <div id="warn1">
+                        <img src="/assets/images/warning.png">
+                    </div>
+                    <div id="warn2" style="display: none;">
+                        <img src="/assets/images/timg2.gif" style="height: 109px;">
+                    </div>
+                    <div id="warn3" style="display: none;">
+                        <img src="/assets/images/success.png">
+                    </div>
+                </div>
+                <div class="modal-footer bg-info">
+                    <div align="center">
+                        <button type="button" class="btn red" onclick="deleteSample(this)" style="width: 100px;" id="btn1">确定</button>
+                        <button type="button" class="btn green" data-dismiss="modal" style="width: 100px;" id="btn2">取消</button>
+                        <button type="button" class="btn green" onclick="updateDelete()" style="width: 100px;display: none;" id="btn3">确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+            $(function () {
+                formValidation();
+                tableInformation();
+
+                $.ajax({
+                    url: "/project/isRunCmd?proname=@proname&sample=@samp",
+                    type: "post"
+                })
+
+
+                window.setInterval(function () {
+                    $(".state").each(function (n, value) {
+                        var st = value.value;
+                        if (st == 0) {
+                            updateTable();
+                        }
+                    })
+                }, 3000);
+            });
+
+            function formValidation() {
+                $('#updateForm').formValidation({
+                    framework: 'bootstrap',
+                    icon: {
+                        valid: 'glyphicon glyphicon-ok',
+                        invalid: 'glyphicon glyphicon-remove',
+                        validating: 'glyphicon glyphicon-refresh'
+                    },
+                    fields: {
+                        newsample: {
+                            validators: {
+                                notEmpty: {
+                                    message: '不能为空!'
+                                },
+                                different: {
+                                    field: 'samplename',
+                                    message: '不能与原样品名相同'
+                                },
+                                remote: {
+                                    type: 'POST',
+                                    url: '@routes.SampleController.checkNewsample(proname)',
+                                    message: '样品名重复，请重新输入'
+                                }
+                            }
+                        }
+                    }
+                })
+            }
+
+            function updateSample(obj) {
+                var name = obj.value;
+                var id = obj.id;
+                $("#samplename").empty();
+                $("#samplename").val(name);
+                $("#sampleId").val(id);
+                $("#update").modal("show")
+            }
+
+            function sureUpdate() {
+                var form = $("#updateForm")
+                var fv = form.data("formValidation")
+                fv.validate()
+                if (fv.isValid()) {
+                    var index = layer.load(1, {
+                        shade: [0.1, '#fff']
+                    });
+                    $.ajax({
+                        url: "@routes.SampleController.updateSample()",
+                        type: "post",
+                        dataType: "json",
+                        data: $("#updateForm").serialize(),
+                        success: function (data) {
+                            if (data.valid == "true") {
+                                layer.close(index);
+                                $("#update").modal("hide")
+                                cpm("table","修改成功");
+                            }
+                        }
+                    })
+                }
+            }
+
+            function restart(obj) {
+                $("#deploy").empty();
+                var id = obj.value;
+                $.ajax({
+                    url: "/project/deployGet?id=" + id,
+                    type: "get",
+                    dataType: "json",
+                    success: function (data) {
+                        $("#deploy").append(data.html);
+                        $("#rest").modal("show")
+                    }
+                })
+            }
+
+            function openDelete(obj) {
+                var i = obj.id;
+                var name = obj.value;
+                $("#dsample").empty();
+                $("#dsample").append(name);
+                $("#btn1").val(i);
+                deleteBefore();
+                $("#deleteShow").modal("show");
+
+            }
+
+            function deleteSample(obj) {
+                var id = obj.value;
+                deleting();
+                $.ajax({
+                    url: "/project/deleteSample?id=" + id,
+                    type: "get",
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.valid == "true") {
+                            deleteAfter();
+                        }
+                    }
+                });
+            }
+
+            function updateDelete() {
+                $("#deleteShow").modal("hide");
+                updateTable();
+            }
+
+            function openLog(obj) {
+                $("#logInfo").empty();
+                var id = obj.value;
+                $.ajax({
+                    url: "/project/openLogFile?id=" + id,
+                    type: "get",
+                    dataType: "json",
+                    success: function (data) {
+                        $("#logInfo").append(data.log);
+                        $("#logShow").modal("show")
+                    }
+                })
+            }
+
+            function tableInformation() {
+                $.ajax({
+                    url: "@routes.SampleController.getAllSample(proname)",
+                    type: "post",
+                    dataType: "json",
+                    success: function (data) {
+                        $('#table').bootstrapTable({data: data});
+                    }
+                })
+            }
+
+            function updateTable() {
+                $.ajax({
+                    url: "@routes.SampleController.getAllSample(proname)",
+                    type: "post",
+                    dataType: "json",
+                    success: function (data) {
+                        $("#table").bootstrapTable('load', data);
+                    }
+                });
+            }
+
+            function Running() {
+                var form = $("#resetForm")
+                var fv = form.data("formValidation")
+                fv.validate()
+                if (fv.isValid()) {
+                    $.ajax({
+                        url:"@routes.SampleController.reset()",
+                        type:"post",
+                        dataType:"json",
+                        data: $("#resetForm").serialize(),
+                        success:function (data) {
+                            if(data.valid == "true"){
+                                $("#rest").modal("hide");
+                                updateTable();
+                                var sample = $("#sample").val();
+                                $.ajax({
+                                    url: "/project/isRunCmd?proname=@proname&sample=" + sample,
+                                    type: "post"
+                                })
+                            }
+                        }
+                    })
+                }
+            }
+
+    </script>
+
+
+}

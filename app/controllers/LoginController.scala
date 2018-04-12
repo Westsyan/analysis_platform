@@ -14,7 +14,7 @@ import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 
-class LoginController @Inject()(admindao: adminDao,projectdao:projectDao) extends Controller {
+class LoginController @Inject()(admindao: adminDao,projectdao:projectDao,sampledao:sampleDao) extends Controller {
 
   def admin = Action {
     Ok(views.html.adminAndLogin.admin())
@@ -41,15 +41,14 @@ class LoginController @Inject()(admindao: adminDao,projectdao:projectDao) extend
   }
 
   def toIndex(account:String) : Action[AnyContent]=Action{ implicit request=>
-        Redirect(routes.LoginController.index()).withSession(request.session + ("user" -> account))
+        Redirect(routes.SampleController.home()).withSession(request.session + ("user" -> account))
   }
 
-  def index = Action.async{ implicit request =>
+  def index = Action{ implicit request =>
     val account = request.session.get("user").head
-    projectdao.getAllProject(account).map{x=>
-      Ok(views.html.background.index(x))
-    }
-
+    val id = Await.result(admindao.getIdByAccount(account),Duration.Inf)
+    val x = Await.result(projectdao.getAllProject(id),Duration.Inf)
+    Ok(views.html.background.index(x))
   }
 
   def logout = Action {
@@ -95,53 +94,8 @@ class LoginController @Inject()(admindao: adminDao,projectdao:projectDao) extend
     }
   }
 
-  case class projectData(projectname:String,description:String)
-
-  val projectForm = Form(
-    mapping(
-      "projectname" -> text,
-      "description" -> text
-    )(projectData.apply)(projectData.unapply)
-  )
-
-  def addProject: Action[AnyContent] = Action { implicit request =>
-    val data = projectForm.bindFromRequest.get
-    val projectname = data.projectname
-    val description = data.description
-    val account = request.session.get("user").head
-    val date = Utils.date
-    val project = (account,projectname,description,date,0)
-    Await.result(projectdao.addProject(Seq(project)),Duration.Inf)
-    val accId = Await.result(admindao.getIdByAccount(account),Duration.Inf)
-    val proId = Await.result(projectdao.getIdByProjectname(account,projectname),Duration.Inf)
-    new File(Utils.path + "/" + accId + "/" + proId).mkdirs()
-    println(project)
-    Ok(Json.obj("valid" -> "true"))
-  }
 
 
-  case class projectnameData(projectname:String)
 
-  val projectnameForm = Form(
-    mapping(
-      "projectname" -> text
-    )(projectnameData.apply)(projectnameData.unapply)
-  )
-
-  def checkProjectname = Action.async { implicit request =>
-    val account = request.session.get("user").head
-    val data = projectnameForm.bindFromRequest.get
-    val projectname = data.projectname
-    projectdao.getProjectname(account,projectname).map { x =>
-      val valid = if (x.size == 0) {
-        "true"
-      } else {
-        "false"
-      }
-      val message = "项目已存在！"
-      val json = Json.obj("valid" -> valid, "message" -> message)
-      Ok(Json.toJson(json))
-    }
-  }
 
 }

@@ -198,6 +198,21 @@ img {
     opacity: 0.5;
 }
 
+.indent {
+    margin-left: 4em;
+    margin-bottom: 10px;
+}
+
+.indent-1 {
+    margin-left: 6em;
+    margin-bottom: 10px;
+}
+
+.indent-2 {
+    margin-left: 2em;
+    margin-bottom: 10px;
+}
+
 .title {
     z-index: 2;
     color: #fff;
@@ -800,3 +815,16 @@ button:focus, input[type="submit"] {
     padding: 17px 0;
 }
 
+.btn-remove{
+    float: right;
+    background-color: transparent;
+    border: none;
+}
+
+.btn-remove:hover{
+    background-color: #578EBE;
+}
+
+.modal-margin{
+    margin-top: 60px;
+}

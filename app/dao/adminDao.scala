@@ -36,4 +36,7 @@ class adminDao @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
   def getIdByAccount(account:String) : Future[Int] ={
     db.run(User.filter(_.account === account).map(_.id).result.head)
   }
+
+
+
 }

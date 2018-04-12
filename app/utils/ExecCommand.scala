@@ -20,9 +20,20 @@ class ExecCommand {
     if (exitCode == 0) isSuccess = true
   }
 
+  def execs(command1: String, command2: String, command3:String, command4 :String) = {
+    val exitCode = (command1 #&& command2 #&& command3 #&& command4) ! log
+    if (exitCode == 0) isSuccess = true
+  }
+
   def exec(command: String, outFile: File) = {
     val exitCode = (command #> outFile) ! log
     if (exitCode == 0) isSuccess = true
+  }
+
+  def exec(command1:String,command2:String,tmpDir:String) = {
+    val exitCode1 = Process(command1 , new File(tmpDir)) ! log
+    val exitCode2 = Process(command2 , new File(tmpDir)) ! log
+    if(exitCode1 == 0 && exitCode2 == 0) isSuccess = true
   }
 
   def exe(command:String, tmpDir:String) = {
