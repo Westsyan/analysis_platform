@@ -38,6 +38,10 @@ class otuDao @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
     db.run(Otu.filter(_.id === id).delete).map(_ =>())
   }
 
+  def deleteByUserid(id:Int) : Future[Unit] = {
+    db.run(Otu.filter(_.accountid === id).delete).map(_ => ())
+  }
+
   def getById(id:Int) : Future[OtuRow] ={
     db.run(Otu.filter(_.id === id).result.head)
   }
@@ -45,4 +49,5 @@ class otuDao @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) e
   def updateOtuName(id:Int,newName:String) : Future[Unit] = {
     db.run(Otu.filter(_.id === id).map(_.otuname).update(newName)).map(_ =>())
   }
+
 }

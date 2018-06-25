@@ -47,6 +47,10 @@ class sampleDao  @Inject()(protected val dbConfigProvider: DatabaseConfigProvide
     db.run(Sample.filter(_.id === id).delete).map(_=>())
   }
 
+  def deleteByUserid(id:Int) : Future[Unit] = {
+    db.run(Sample.filter(_.accountid === id).delete).map(_ => ())
+  }
+
   def deleteByProId(accountId:Int,proId:Int) : Future[Unit] = {
     db.run(Sample.filter(_.accountid === accountId).filter(_.projectid === proId).delete).map(_=>())
   }
@@ -54,4 +58,11 @@ class sampleDao  @Inject()(protected val dbConfigProvider: DatabaseConfigProvide
   def getAllById(id:Int) : Future[SampleRow] = {
     db.run(Sample.filter(_.id === id).result.head)
   }
+
+  def checkByPosition(userId:Int,proId:Int,sample: String) : Future[Seq[SampleRow]] ={
+    val samples = sample.split(",").map(_.trim).distinct
+    db.run(Sample.filter(_.accountid === userId).filter(_.projectid === proId).filter(_.sample.inSetBind(samples)).result)
+  }
+
+
 }

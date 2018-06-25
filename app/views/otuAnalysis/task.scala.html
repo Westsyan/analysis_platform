@@ -1,5 +1,4 @@
-@import models.Tables.SampleRow
-@(sample: Seq[SampleRow], projectName: Seq[String], proname: String, id: Int)(implicit session: Session)
+@(projectName: Seq[String], proname: String)(implicit session: Session)
 @fileupload.main(proname, projectName, proname) {
 
     <style>
@@ -46,6 +45,10 @@
                 background-color: #428BCA;
                 height: 55px;
             }
+
+        td{
+            white-space:nowrap;
+        }
     </style>
 
 
@@ -72,6 +75,7 @@
                                     <th data-field="otuname" data-sortable="true" id="otuname">任务名</th>
                                     <th data-field="createdate" data-sortable="true" id="createdata">添加时间</th>
                                     <th data-field="state" data-sortable="true" id="state">运行状态</th>
+                                    <th data-field="otuseqs" data-sortable="true" id="otuseqs">Otu数目</th>
                                     <th data-field="results" data-sortable="false" id="results">下载文件</th>
                                     <th data-field="operation" data-sortable="false" id="operation">操作</th>
                                 </tr>
@@ -83,7 +87,7 @@
         </div>
     </div>
 
-    <div id="update" class="modal fade modal-margin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+@*    <div id="update" class="modal fade modal-margin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog" style="width: 600px;">
             <div class="modal-content">
                 <div class="modal-header bg-primary">
@@ -135,7 +139,7 @@
                 </form>
             </div>
         </div>
-    </div>
+    </div>*@
 
     <div id="rest" class="modal fade modal-margin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog" style="width: 1000px;">
@@ -212,8 +216,8 @@
                                     <label class="col-sm-12">
                                         cluster_otus(cluster) and usearch_global(mapping) strand:</label>
                                     <div class="col-sm-6 indent">
-                                        <select class="form-control" name="strand">
-                                            <option value="plus" selected>plus</option>
+                                        <select class="form-control" name="strand" id="strand">
+                                            <option value="plus">plus</option>
                                             <option value="both">both</option>
                                         </select>
                                     </div>
@@ -237,32 +241,53 @@
 
                                 <div class="form-group">
                                     <label class="col-sm-12">
+                                        Select Database:</label>
+                                    <div class="col-sm-6 indent">
+                                        <select class="form-control" name="db_1" id="db_1">
+                                            <option value="greengenes.16s">greengenes.16s</option>
+                                            <option value="greengenes.16s_archaea">greengenes.16s_archaea</option>
+                                            <option value="greengenes.16s_bacteria">greengenes.16s_bacteria</option>
+                                            <option value="rdp.16s">rdp.16s</option>
+                                            <option value="rdp.16s_archaea">rdp.16s_archaea</option>
+                                            <option value="rdp.16s_bacteria">rdp.16s_bacteria</option>
+                                            <option value="silva.16s">silva.16s</option>
+                                            <option value="silva.16s_archaea">silva.16s_archaea</option>
+                                            <option value="silva.16s_bacteria" selected>silva.16s_bacteria</option>
+                                            <option value="silva.18s_eukaryota">silva.18s_eukaryota</option>
+                                            <option value="silva">silva</option>
+                                            <option value="unite.its_fungi">unite.its_fungi</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-12">
                                         Taxon assignment method:</label>
                                     <div class="col-sm-6 indent">
-                                        <select class="form-control" name="method" onchange="change(this)" id="method-1">
-                                            <option value="rdp" selected>RDP Classifier</option>
+                                        <select class="form-control" name="method_1" onchange="change(this)" id="method_1">
+                                            <option value="rdp">RDP Classifier</option>
                                             <option value="uclust">Uclust consensus taxonomy assigner</option>
                                         </select>
                                     </div>
                                 </div>
 
 
-                                <div id="rdp-1">
+                                <div id="rdp-1" style="display: none;">
                                     <div class="form-group" >
                                         <label class="col-sm-7">
                                             Minimum confidence to record an assignment, used for rdp method </label>
                                         <div class="col-sm-6 indent">
-                                            <input name="c" id="c" class="form-control" value="0.7" />
+                                            <input name="c" id="c" class="form-control" />
                                         </div>
                                     </div>
                                 </div>
 
-                                <div id="uclust-1" style="display: none;">
+                                <div id="uclust-1" >
                                     <div class="form-group" >
                                         <label class="col-sm-7">
                                             Number of database hits to consider when making an assignment, used for uclust method </label>
                                         <div class="col-sm-6 indent">
-                                            <input name="uma" id="uma" class="form-control" value="3" />
+                                            <input name="uma" id="uma" class="form-control"/>
                                         </div>
                                     </div>
 
@@ -271,7 +296,7 @@
                                         <label class="col-sm-7">
                                             Minimum percent similarity (expressed as a fraction between 0 and 1) to consider a database match a hit, used for uclust method </label>
                                         <div class="col-sm-6 indent">
-                                            <input name="s" id="s" class="form-control" value="0.9" />
+                                            <input name="s" id="s" class="form-control" />
                                         </div>
                                     </div>
                                 </div>
@@ -324,32 +349,53 @@
 
                             <div class="form-group">
                                 <label class="col-sm-12">
+                                    Select Database:</label>
+                                <div class="col-sm-6 indent">
+                                    <select class="form-control" name="db_2" id="db_2">
+                                        <option value="greengenes.16s">greengenes.16s</option>
+                                        <option value="greengenes.16s_archaea">greengenes.16s_archaea</option>
+                                        <option value="greengenes.16s_bacteria">greengenes.16s_bacteria</option>
+                                        <option value="rdp.16s">rdp.16s</option>
+                                        <option value="rdp.16s_archaea">rdp.16s_archaea</option>
+                                        <option value="rdp.16s_bacteria">rdp.16s_bacteria</option>
+                                        <option value="silva.16s">silva.16s</option>
+                                        <option value="silva.16s_archaea">silva.16s_archaea</option>
+                                        <option value="silva.16s_bacteria" selected>silva.16s_bacteria</option>
+                                        <option value="silva.18s_eukaryota">silva.18s_eukaryota</option>
+                                        <option value="silva">silva</option>
+                                        <option value="unite.its_fungi">unite.its_fungi</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-12">
                                     Taxon assignment method:</label>
                                 <div class="col-sm-6 indent">
-                                    <select class="form-control" name="method" onchange="change1(this)" id="method-2">
-                                        <option value="rdp" selected>RDP Classifier</option>
+                                    <select class="form-control" name="method_2" onchange="change1(this)" id="method_2">
+                                        <option value="rdp">RDP Classifier</option>
                                         <option value="uclust">Uclust consensus taxonomy assigner</option>
                                     </select>
                                 </div>
                             </div>
 
 
-                            <div id="rdp-2">
+                            <div id="rdp-2" style="display: none;">
                                 <div class="form-group" >
                                     <label class="col-sm-7">
                                         Minimum confidence to record an assignment, used for rdp method </label>
                                     <div class="col-sm-6 indent">
-                                        <input name="c" id="c" class="form-control" value="0.7" />
+                                        <input name="rdp_c" id="rdp_c" class="form-control" value="0.7" />
                                     </div>
                                 </div>
                             </div>
 
-                            <div id="uclust-2" style="display: none;">
+                            <div id="uclust-2">
                                 <div class="form-group" >
                                     <label class="col-sm-7">
                                         Number of database hits to consider when making an assignment, used for uclust method </label>
                                     <div class="col-sm-6 indent">
-                                        <input name="uma" id="uma" class="form-control" value="3" />
+                                        <input name="rdp_uma" id="rdp_uma" class="form-control" value="3" />
                                     </div>
                                 </div>
 
@@ -358,7 +404,7 @@
                                     <label class="col-sm-7">
                                         Minimum percent similarity (expressed as a fraction between 0 and 1) to consider a database match a hit, used for uclust method </label>
                                     <div class="col-sm-6 indent">
-                                        <input name="s" id="s" class="form-control" value="0.9" />
+                                        <input name="rdp_s" id="rdp_s" class="form-control" value="0.9" />
                                     </div>
                                 </div>
                             </div>
@@ -390,7 +436,62 @@
 
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
 
+    <div id="tableShow" class="modal fade modal-margin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width: 1000px;">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                    <h4 class="modal-title">
+                        <span id="lblAddTitle" style="font-weight: bold">日志信息：</span>
+                        <button type="button" class="btn-remove" data-dismiss="modal" ><i class="fa fa-remove"></i></button>
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row-fluid">
+                        <div  id="image" align="center">
+                            <img src='/assets/images/timg2.gif'>
+                        </div>
+                        <div  id="tableContent">
+                            <table class="display table table-bordered table-hover table-striped" id="table_show" data-pagination="true"
+                           data-page-list="[10]" data-page-size="15"
+                            style="word-wrap: break-word;"
+                            >
+                                <thead>
+                                    <th data-field='otu_id' data-sortable='true' id="marker">OTU ID</th>
+                                </thead>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="warnShow" class="modal fade modal-margin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="margin-top: 200px;">
+        <div class="modal-dialog" style="width: 400px;">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h4 class="modal-title" align="center">
+                        <span id="warnInfo" style="font-weight: bold">
+                        </span>
+                    </h4>
+                </div>
+                <div class="row-fluid" align="center" >
+                    <div>
+                        <img src="/assets/images/warning.png">
+                    </div>
+                </div>
+                <div class="modal-footer bg-info">
+                    <div align="center">
+                        <button type="button" class="btn green" data-dismiss="modal" style="width: 100px;" >
+                            确定</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -441,16 +542,11 @@
     <script>
 
 
+        var tableHtml = $("#tableContent").html();
+
             $(function () {
                 tableInformation();
                 formValidation();
-
-                if (@id != 0){
-                    $.ajax({
-                        url: "/project/isRunOtuCmd?id=@id",
-                        type: "post"
-                    })
-                };
 
                 window.setInterval(function () {
                     $(".state").each(function (n, value) {
@@ -546,6 +642,30 @@
                                     message: "范围：0 - 1！"
                                 }
                             }
+                        },
+                        uma: {
+                            validators: {
+                                integer: {
+                                    message: '必须为整数'
+                                },
+                                between: {
+                                    min: 1,
+                                    max: 99999999999,
+                                    message: "最小值为1！"
+                                }
+                            }
+                        },
+                        s: {
+                            validators: {
+                                numeric: {
+                                    message: '必须为数字'
+                                },
+                                between: {
+                                    min: 0,
+                                    max: 1,
+                                    message: "范围：0 - 1！"
+                                }
+                            }
                         }
                     }
                 });
@@ -568,7 +688,31 @@
                                    message: "范围：0 - 1！"
                                }
                            }
-                       }
+                       },
+                        rdp_uma: {
+                            validators: {
+                                integer: {
+                                    message: '必须为整数'
+                                },
+                                between: {
+                                    min: 1,
+                                    max: 99999999999,
+                                    message: "最小值为1！"
+                                }
+                            }
+                        },
+                        rdp_s: {
+                            validators: {
+                                numeric: {
+                                    message: '必须为数字'
+                                },
+                                between: {
+                                    min: 0,
+                                    max: 1,
+                                    message: "范围：0 - 1！"
+                                }
+                            }
+                        }
 
                     }
                 });
@@ -593,7 +737,7 @@
                     });
                     $.ajax({
                         url: "@routes.OtuController.updateOtuName()",
-                        type: "post",
+                        type: "put",
                         dataType: "json",
                         data: $("#updateForm").serialize(),
                         success: function (data) {
@@ -614,14 +758,30 @@
                     type: "post",
                     dataType: "json",
                     success: function (data) {
-                        $("#otuIds").val(id);
-                        $("#samples").val(data.sample);
-                        $("#minseqlength").val(data.min);
-                        $("#otu_radius_pct").val(data.otupct);
-                        $("#id").val(data.id);
-                        $("#c").val(data.c);
-                        $("#db").val(data.db);
-                        $("#rest").modal("show")
+                        if (data.valid == "false") {
+                            $("#warnInfo").empty();
+                            $("#warnInfo").append(data.message);
+                            $("#warnShow").modal("show");
+                        } else {
+                            $("#set-1").hide();
+                            $("#down-1").show();
+                            $("#up-1").hide();
+                            $("#set-2").hide();
+                            $("#down-2").show();
+                            $("#up-2").hide();
+                            $("#otuIds").val(id);
+                            $("#samples").val(data.sample);
+                            $("#minseqlength").val(data.min);
+                            $("#otu_radius_pct").val(data.otupct);
+                            $("#id").val(data.id);
+                            $("#strand").val(data.strand);
+                            $("#db_1").val(data.db);
+                            $("#method_1").val(data.method);
+                            $("#c").val(data.c);
+                            $("#uma").val(data.uma);
+                            $("#s").val(data.s);
+                            $("#rest").modal("show")
+                        }
                     }
                 })
             }
@@ -636,7 +796,10 @@
                         $("#rdp_id").val(id);
                         $("#rdp_otuname").val(data.otuname);
                         $("#rdp_c").val(data.c);
-                        $("#rdp_db").val(data.db);
+                        $("#method_2").val(data.method);
+                        $("#db_2").val(data.db);
+                        $("#rdp_uma").val(data.uma);
+                        $("#rdp_s").val(data.s);
                         $("#restRdp").modal("show");
                     }
                 });
@@ -682,7 +845,7 @@
                 deleting();
                 $.ajax({
                     url: "/project/deleteTask?id=" + id,
-                    type: "get",
+                    type: "delete",
                     dataType: "json",
                     success: function (data) {
                         if (data == "success") {
@@ -755,6 +918,37 @@
                         }
                     })
                 }
+            }
+
+            function openTable(obj) {
+                $("#tableContent").empty();
+                $("#tableContent").html(tableHtml);
+                $("#image").show();
+                $("#tableContent").hide();
+                $("#tableShow").modal("show");
+                var id = obj.id;
+                            $.ajax({
+                                url: "/project/Otu/getTax?id=" +id,
+                                type: "get",
+                                dataType: "json",
+                                success: function (data) {
+                                    refreshContent(data)
+                                    $("#image").hide();
+                                    $("#tableContent").show();
+                                }
+                            });
+
+            }
+
+            function refreshContent(data) {
+                var html = "";
+                $.each(data.sampleNames, function (i, v) {
+                    html += "<th data-field='" + v + "' data-sortable='true'>" + v + "</th>"
+                });
+                $("#marker").after(html);
+                $('#table_show').bootstrapTable({
+                    data: data.array
+                });
             }
 
 

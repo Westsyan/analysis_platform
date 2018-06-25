@@ -3,50 +3,52 @@ package controllers
 import java.io.File
 import javax.inject.Inject
 
+import akka.stream.IOResult
+import akka.stream.scaladsl.{FileIO, Sink}
+import akka.util.ByteString
 import dao._
 import models.Tables._
 import org.apache.commons.io.FileUtils
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json.Json
+import play.api.libs.streams.Accumulator
+import play.api.mvc.MultipartFormData.FilePart
 import play.api.mvc._
+import play.core.parsers.Multipart.{FileInfo, FilePartHandler}
 import utils._
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
-import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.Duration
-
 
 class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sampledao: sampleDao) extends Controller {
 
   def enterHome(projectname: String): Action[AnyContent] = Action { implicit request =>
-    val account = request.session.get("user").head
-    val userId = Await.result(admindao.getIdByAccount(account), Duration.Inf)
+    val userId = request.session.get("id").head.toInt
     val projectId = Await.result(projectdao.getIdByProjectname(userId, projectname), Duration.Inf)
     val data = new File(Utils.path + "/" + userId + "/" + projectId)
     val allName = Await.result(projectdao.getAllProject(userId), Duration.Inf)
     if (data.listFiles().size < 2) {
       Redirect(routes.SampleController.loadData(projectname))
     } else {
-      Redirect(routes.SampleController.dataPage(projectname, ""))
+      Redirect(routes.SampleController.dataPage(projectname))
     }
   }
 
   def loadData(proname: String): Action[AnyContent] = Action { implicit request =>
-    val account = request.session.get("user").head
-    val userId = Await.result(admindao.getIdByAccount(account), Duration.Inf)
+    val userId = request.session.get("id").head.toInt
     val allName = Await.result(projectdao.getAllProject(userId), Duration.Inf)
     Ok(views.html.fileupload.uploadFile(allName, proname))
   }
 
   def home = Action { implicit request =>
-    val account = request.session.get("user").head
-    val userId = Await.result(admindao.getIdByAccount(account), Duration.Inf)
+    val userId = request.session.get("id").head.toInt
     val all = Await.result(projectdao.getAll(userId), Duration.Inf)
     val projectname = all.map(_.projectname)
-    Ok(views.html.background.home(all, projectname)).withNewSession.withSession("user" -> account)
+    Ok(views.html.background.home(all, projectname))
   }
 
   case class paraData(proname: String, sample: String, encondingType: String, stepMethod: String, adapter: Option[String],
@@ -83,60 +85,78 @@ class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sam
     )(paraData.apply)(paraData.unapply)
   )
 
-  case class flashData(m: Int, M: Int, x: String)
+  case class flashData(m: Option[Int], M: Option[Int], x: Option[String])
 
   def flashForm = Form(
     mapping(
-      "m" -> number,
-      "M" -> number,
-      "x" -> text
+      "m" -> optional(number),
+      "M" -> optional(number),
+      "x" -> optional(text)
     )(flashData.apply)(flashData.unapply)
   )
 
-  def uploadFile = Action(parse.multipartFormData) { implicit request =>
+  private def handleFilePartAsFile: FilePartHandler[File] = {
+    case FileInfo(partName, filename, contentType) =>
+
+      val file = new File(Utils.tmpPath, Utils.random)
+      val path = file.toPath
+      val fileSink: Sink[ByteString, Future[IOResult]] = FileIO.toPath(path)
+      val accumulator: Accumulator[ByteString, IOResult] = Accumulator(fileSink)
+      accumulator.map {
+        case IOResult(count, status) =>
+          FilePart(partName, filename, contentType, file)
+      }
+  }
+
+
+  def uploadFile = Action(parse.multipartFormData(handleFilePartAsFile)) { implicit request =>
     val path = Utils.path
-    val account = request.session.get("user").head
     val file = request.body.files
     val paradata = paraForm.bindFromRequest.get
     val flashdata = flashForm.bindFromRequest.get
     val proname = paradata.proname
-    val userId = Await.result(admindao.getIdByAccount(account), Duration.Inf)
+    val sample = paradata.sample
+    val userId = request.session.get("id").head.toInt
     val project = Await.result(projectdao.getProject(userId, proname), Duration.Inf)
     val type1 = paradata.encondingType
     val type2 = type1.split("-phred").mkString
-    val sample = paradata.sample
-    val date = Utils.date
-    val sa = SampleRow(0, sample, userId, project.id, date, 0, 0)
-    Await.result(sampledao.addSample(Seq(sa)), Duration.Inf)
-    val sampleId = Await.result(sampledao.getIdByPosition(userId, project.id, sample), Duration.Inf)
-    val outPath = Utils.outPath(userId,project.id,sampleId)
-    val in1 = file(0).ref.file.getPath
-    val name1 = file(0).filename
-    val in2 = file(1).ref.file.getPath
-    val name2 = file(1).filename
-    val out1 = outPath + "/raw.data_1.fastq"
-    val out2 = outPath + "/raw.data_2.fastq"
-    getFastq(in1, out1,name1)
-    getFastq(in2, out2,name2)
-    new File(outPath + "/tmp").mkdir()
-    val deploy = mutable.Buffer(sampleId, type1, paradata.stepMethod, paradata.adapter.get, paradata.seed_mismatches.get,
-      paradata.palindrome_clip_threshold.get, paradata.simple_clip_threshold.get, paradata.trimMethod,
-      paradata.window_size.get, paradata.required_quality.get, paradata.minlenMethod, paradata.minlen.get,
-      paradata.leadingMethod, paradata.leading.get, paradata.trailingMethod, paradata.trailing.get,
-      paradata.cropMethod, paradata.crop.get, paradata.headcropMethod, paradata.headcrop.get, type2,
-      flashdata.m, flashdata.M, flashdata.x)
 
-    FileUtils.writeLines(new File(outPath + "/deploy.txt"), deploy.asJava)
+    val ses = getUserIdAndProId(request.session, proname)
+    val sa = SampleRow(0, sample, ses._1, ses._2, Utils.date, 0, 0)
+    Await.result(sampledao.addSample(Seq(sa)), Duration.Inf)
+    val row = Await.result(sampledao.getByPosition(ses._1, ses._2, sample), Duration.Inf)
+    try {
+      val run = Future {
+        val outPath = Utils.outPath(ses._1, ses._2, row.id)
+        val in1 = file.head.ref.getPath
+        val name1 = file.head.filename
+        val in2 = file(1).ref.getPath
+        val name2 = file(1).filename
+        val out1 = outPath + "/raw.data_1.fastq"
+        val out2 = outPath + "/raw.data_2.fastq"
+        getFastq(in1, out1, name1)
+        getFastq(in2, out2, name2)
+        val deploy = mutable.Buffer(proname, type1, paradata.stepMethod, paradata.adapter.get, paradata.seed_mismatches.getOrElse(2),
+          paradata.palindrome_clip_threshold.getOrElse(30), paradata.simple_clip_threshold.getOrElse(10), paradata.trimMethod,
+          paradata.window_size.getOrElse(50), paradata.required_quality.getOrElse(20), paradata.minlenMethod, paradata.minlen.getOrElse(50),
+          paradata.leadingMethod, paradata.leading.getOrElse(3), paradata.trailingMethod, paradata.trailing.getOrElse(3),
+          paradata.cropMethod, paradata.crop.getOrElse(0), paradata.headcropMethod, paradata.headcrop.getOrElse(0), type2,
+          flashdata.m.getOrElse(10), flashdata.M.getOrElse(65), flashdata.x.getOrElse(0.25))
+        FileUtils.writeLines(new File(outPath + "/deploy.txt"), deploy.asJava)
+        runCmd1(row.id, proname, request.session)
+      }
+    } catch {
+      case e: Exception => Await.result(sampledao.update(SampleRow(row.id, row.sample, ses._1, ses._2, row.createdata, 0, 2)), Duration.Inf)
+    }
     Ok(Json.obj("valid" -> "true"))
   }
 
   def reset = Action { implicit request =>
     val path = Utils.path
-    val account = request.session.get("user").head
     val paradata = paraForm.bindFromRequest.get
     val flashdata = flashForm.bindFromRequest.get
     val proId = paradata.proname.toInt
-    val userId = Await.result(admindao.getIdByAccount(account), Duration.Inf)
+    val userId = request.session.get("id").head.toInt
     val type1 = paradata.encondingType
     val type2 = type1.split("-phred").mkString
     val sample = paradata.sample
@@ -164,31 +184,37 @@ class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sam
     val command1 = dealWithPara1(outPath, deploy)
     val command2 = dealWithFlash1(outPath, deploy)
     val command = new ExecCommand
-    command.exec(command1, command2)
+    val tmp = outPath + "/tmp"
+    new File(tmp).mkdir()
+    println(command1)
+    command.exec(command1, command2, tmp)
     val samples = Await.result(sampledao.getAllSample(ses._1, ses._2), Duration.Inf)
     Await.result(projectdao.updateCount(ses._2, samples.size), Duration.Inf)
     val row = Await.result(sampledao.getAllById(sampleId), Duration.Inf)
     if (command.isSuccess) {
-      FileUtils.deleteDirectory(new File(outPath + "/tmp"))
+      FileUtils.deleteDirectory(new File(tmp))
       val seqs = getSeqs(outPath)
       val sampleRow = SampleRow(sampleId, row.sample, ses._1, ses._2, row.createdata, seqs, 1)
       Await.result(sampledao.update(sampleRow), Duration.Inf)
       getLog(outPath, command.getErrStr)
     } else {
+      FileUtils.deleteDirectory(new File(tmp))
       val sampleRow = SampleRow(sampleId, row.sample, ses._1, ses._2, row.createdata, 0, 2)
       Await.result(sampledao.update(sampleRow), Duration.Inf)
-      getLog(outPath, command.getErrStr)
-      println("fail")
+      if ((new File(outPath)).exists()) {
+        FileUtils.writeStringToFile(new File(outPath, "log.txt"), command.getErrStr)
+      }
     }
   }
 
-  def getFastq(path: String, outputPath: String,name:String): Unit = {
+  def getFastq(path: String, outputPath: String, name: String): Unit = {
     val suffix = name.split('.').last
     if (suffix == "gz") {
-      FileUtils.writeStringToFile(new File(outputPath),"")
+      FileUtils.writeStringToFile(new File(outputPath), "")
       CompactAlgorithm.unGzipFile(path, outputPath)
+      new File(path).delete()
     } else {
-      FileUtils.copyFile(new File(path), new File(outputPath))
+      FileUtils.moveFile(new File(path), new File(outputPath))
     }
   }
 
@@ -214,14 +240,14 @@ class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sam
     val tri = mutable.Buffer(input.head, both.head, forward.head, reverse.head, drop.head, PE, "\n")
     val flash = FileUtils.readLines(flashFile).asScala
     val f = flash.map(_.split(""))
-    val fs = f.map{x=>
-      if(x.contains("/")){
+    val fs = f.map { x =>
+      if (x.contains("/")) {
         x
-      }else{
+      } else {
         Array("0")
       }
     }.distinct.diff(Array("0"))
-    val lastFlash = f.diff(fs).map(_.mkString).diff(Array("[FLASH] Input files:","[FLASH] Output files:"))
+    val lastFlash = f.diff(fs).map(_.mkString).diff(Array("[FLASH] Input files:", "[FLASH] Output files:"))
     flashFile.delete()
     val logs = tri ++ lastFlash
     FileUtils.writeLines(new File(outPath, "log.txt"), logs.asJava)
@@ -236,7 +262,7 @@ class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sam
     val unout1 = tmpDir + "/r1_unpaired_out.fastq"
     val out2 = tmpDir + "/r2_paired_out.fastq"
     val unout2 = tmpDir + "/r2_unpaired_out.fastq"
-    var command = s"perl ${path}/trimmomatic.pl java -jar ${path}/Trimmomatic-0.32/trimmomatic-0.32.jar PE -threads 1 " +
+    var command = s"java -jar ${path}/Trimmomatic-0.32/trimmomatic-0.32.jar PE -threads 1 " +
       s"${data(1)} ${in1} ${in2} ${out1} ${unout1} ${out2} ${unout2} "
     if (data(2) == "yes") {
       val adapter = path + "/Trimmomatic-0.32/adapters/" + data(3)
@@ -269,79 +295,27 @@ class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sam
     command
   }
 
-  def dealWithPara(data: paraData, outPath: String): String = {
-    val path = Utils.path
-
-    val in1 = outPath + "/raw.data_1.fastq"
-    val in2 = outPath + "/raw.data_2.fastq"
-    val tmpDir = outPath + "/tmp"
-    val out1 = tmpDir + "/r1_paired_out.fastq"
-    val unout1 = tmpDir + "/r1_unpaired_out.fastq"
-    val out2 = tmpDir + "/r2_paired_out.fastq"
-    val unout2 = tmpDir + "/r2_unpaired_out.fastq"
-    var command = s"perl ${path}/trimmomatic.pl java -jar ${path}/Trimmomatic-0.32/trimmomatic-0.32.jar PE -threads 1 " +
-      s"${data.encondingType} ${in1} ${in2} ${out1} ${unout1} ${out2} ${unout2} "
-    if (data.stepMethod == "yes") {
-      val adapter = path + "/Trimmomatic-0.32/adapters/" + data.adapter.head
-      command += s"ILLUMINACLIP:${adapter}:${data.seed_mismatches.head}:${data.palindrome_clip_threshold.head}:${data.simple_clip_threshold.head} "
-    }
-    if (data.trimMethod == "yes") {
-      command += s"SLIDINGWINDOW:${data.window_size.head}:${data.required_quality.head} "
-    }
-    if (data.minlenMethod == "yes") {
-      command += s"MINLEN:${data.minlen.head} "
-    }
-    if (data.leadingMethod == "yes") {
-      command += s"LEADING:${data.leading.head} "
-    }
-    if (data.trailingMethod == "yes") {
-      command += s"TRAILING:${data.trailing.head} "
-    }
-    if (data.cropMethod == "yes") {
-      command += s"CROP:${data.crop.head} "
-    }
-    if (data.headcropMethod == "yes") {
-      command += s"HEADCROP:${data.headcrop.head} "
-    }
-    command
-  }
-
-  def dealWithFlash(data: flashData, outPath: String, type2: String): String = {
-    val path = Utils.path
-    val command = s"perl ${path}/flash.pl -in1 ${outPath}/tmp/r1_paired_out.fastq -in2 ${outPath}/tmp/r2_paired_out.fastq " +
-      s"-o ${outPath}/out.extendedFrags.fastq -log ${outPath}/flash_log.txt -p ${type2} -m ${data.m} -M ${data.M} -x ${data.x}"
-    command
-  }
-
-  def dataPage(proname: String, sample: String) = Action { implicit request =>
+  def dataPage(proname: String) = Action { implicit request =>
     val id = getUserIdAndProId(request.session, proname)
     val allName = Await.result(projectdao.getAllProject(id._1), Duration.Inf)
-    val samples = Await.result(sampledao.getAllSample(id._1, id._2), Duration.Inf)
-
-    Ok(views.html.fileupload.data(samples, allName, proname, sample))
+    Ok(views.html.fileupload.data(allName, proname))
   }
 
   def isRunCmd(sample: String, proname: String): Action[AnyContent] = Action.async { implicit request =>
-    val account = request.session.get("user").get
-    admindao.getIdByAccount(account).flatMap { userId =>
-      projectdao.getIdByProjectname(userId, proname).map { proId =>
-        var valid = "false"
-        if (sample.length != 0) {
-          sampledao.getByPosition(userId, proId, sample).map { x =>
-            if (x.state == 0) {
-              runCmd1(x.id, proname, request.session)
-              valid = "true"
-            }
-          }
-        }
+    val userId = request.session.get("id").head.toInt
+    projectdao.getIdByProjectname(userId, proname).flatMap { proId =>
+      sampledao.getByPosition(userId, proId, sample).map { x =>
+        runCmd1(x.id, proname, request.session)
+        val valid = "true"
         Ok(Json.obj("valid" -> valid))
       }
     }
   }
 
-  def toDate(proname: String, sample: String) = Action { implicit request =>
-    Redirect(routes.SampleController.dataPage(proname, sample))
+  def toDate(proname: String) = Action { implicit request =>
+    Redirect(routes.SampleController.dataPage(proname))
   }
+
 
   case class updateSampleData(sampleId: Int, newsample: String)
 
@@ -364,10 +338,12 @@ class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sam
   def deleteSample(id: Int): Action[AnyContent] = Action { implicit request =>
     val ses = Await.result(sampledao.getAllById(id), Duration.Inf)
     Await.result(sampledao.deleteSample(id), Duration.Inf)
-    val path = Utils.outPath(ses.accountid, ses.projectid, id)
-    FileUtils.deleteDirectory(new File(path))
     val count = Await.result(sampledao.getAllSample(ses.accountid, ses.projectid), Duration.Inf)
     Await.result(projectdao.updateCount(ses.projectid, count.size), Duration.Inf)
+    val run = Future {
+      val path = Utils.outPath(ses.accountid, ses.projectid, id)
+      FileUtils.deleteDirectory(new File(path))
+    }
     val json = Json.obj("valid" -> "true")
     Ok(Json.toJson(json))
   }
@@ -396,16 +372,15 @@ class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sam
   }
 
   def getUserIdAndProId(session: Session, proname: String): (Int, Int) = {
-    val account = session.get("user").head
-    val userId = Await.result(admindao.getIdByAccount(account), Duration.Inf)
+    val userId = session.get("id").head.toInt
     val proId = Await.result(projectdao.getIdByProjectname(userId, proname), Duration.Inf)
     (userId, proId)
   }
 
   def openLogFile(id: Int): Action[AnyContent] = Action { implicit request =>
     val row = Await.result(sampledao.getAllById(id), Duration.Inf)
-    val path = Utils.outPath(row.accountid,row.projectid,id)
-    val log = FileUtils.readLines(new File(path,"/log.txt")).asScala
+    val path = Utils.outPath(row.accountid, row.projectid, id)
+    val log = FileUtils.readLines(new File(path, "/log.txt")).asScala
     var html =
       """
         |<style>
@@ -428,18 +403,18 @@ class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sam
     )(newsampleData.apply)(newsampleData.unapply)
   )
 
-  def checkNewsample(proname:String) = Action.async { implicit request =>
-    val ses = getUserIdAndProId(request.session,proname)
+  def checkNewsample(proname: String) = Action.async { implicit request =>
+    val ses = getUserIdAndProId(request.session, proname)
     val data = newsampleForm.bindFromRequest.get
     val newsample = data.newsample
-      sampledao.getByP(ses._1, ses._2, newsample).map { y =>
-        val valid = if (y.size == 0) {
-          "true"
-        } else {
-          "false"
-        }
-        Ok(Json.obj("valid" -> valid))
+    sampledao.getByP(ses._1, ses._2, newsample).map { y =>
+      val valid = if (y.size == 0) {
+        "true"
+      } else {
+        "false"
       }
+      Ok(Json.obj("valid" -> valid))
+    }
   }
 
   case class sampleData(sample: String)
@@ -491,7 +466,11 @@ class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sam
     val samples = Await.result(sampledao.getAllSample(id._1, id._2), Duration.Inf)
     val json = samples.sortBy(_.id).reverse.map { x =>
       val sample = x.sample
-      val seqs = x.seqs
+      val seqs = if (x.state == 1) {
+        x.seqs.toString
+      } else {
+        "NA"
+      }
       val date = x.createdata.toLocalDate
       val state = if (x.state == 0) {
         "正在运行 <img src='/assets/images/timg.gif'  style='width: 20px; height: 20px;'><input class='state' value='" + x.state + "'>"
@@ -521,7 +500,7 @@ class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sam
            | <button class="update" onclick="openLog(this)" value="${x.id}" title="查看日志"><i class="fa fa-file-text"></i></button>
          """.stripMargin
       } else {
-        ""
+        s"""<button class="delete" onclick="openDelete(this)" value="${x.sample}" id="${x.id}" title="删除样品"><i class="fa fa-trash"></i></button>"""
       }
       Json.obj("sample" -> sample, "seqs" -> seqs, "state" -> state, "createdate" -> date, "results" -> results, "operation" -> operation)
     }
@@ -529,11 +508,11 @@ class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sam
 
   }
 
-  def getAllSampleName(proname:String) = Action.async{implicit request=>
-    val ses = getUserIdAndProId(request.session,proname)
-    sampledao.getAllSample(ses._1,ses._2).map{x=>
+  def getAllSampleName(proname: String) = Action.async { implicit request =>
+    val ses = getUserIdAndProId(request.session, proname)
+    sampledao.getAllSample(ses._1, ses._2).map { x =>
       val sample = x.map { y =>
-       val validSample = if (y.state == 1) {
+        val validSample = if (y.state == 1) {
           y.sample
         } else {
           "0"
@@ -543,4 +522,14 @@ class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sam
       Ok(Json.toJson(sample))
     }
   }
+
+  def test = {
+    val f = Future {
+      println("in")
+    }
+    Await.result(f, Duration.Inf)
+  }
+
+
 }
+

@@ -9,9 +9,9 @@ import scala.collection.JavaConverters._
 object GetHtml {
 
 
-  def deploy(userId: Int, proId: Int, sampleId: Int, sample:String) = {
-    val path = Utils.outPath(userId,proId,sampleId)
-    val row = FileUtils.readLines(new File(path,"/deploy.txt")).asScala
+  def deploy(userId: Int, proId: Int, sampleId: Int, sample: String) = {
+    val path = Utils.outPath(userId, proId, sampleId)
+    val row = FileUtils.readLines(new File(path, "/deploy.txt")).asScala
     var html =
       s"""
          |
@@ -480,6 +480,9 @@ object GetHtml {
         |                        fields: {
         |                             seed_mismatches:{
         |                                validators: {
+        |                                notEmpty: {
+        |                                    message: '不能为空!'
+        |                                },
         |                                    integer: {
         |                                        message: '必须为整数！'
         |                                    }
@@ -487,6 +490,9 @@ object GetHtml {
         |                            },
         |                            palindrome_clip_threshold:{
         |                                validators: {
+        |                                notEmpty: {
+        |                                    message: '不能为空!'
+        |                                },
         |                                    integer: {
         |                                        message: '必须为整数！'
         |                                    }
@@ -494,6 +500,9 @@ object GetHtml {
         |                            },
         |                            simple_clip_threshold:{
         |                                validators: {
+        |                                notEmpty: {
+        |                                    message: '不能为空!'
+        |                                },
         |                                    integer: {
         |                                        message: '必须为整数！'
         |                                    }
@@ -501,6 +510,9 @@ object GetHtml {
         |                            },
         |                            window_size:{
         |                                validators: {
+        |                                notEmpty: {
+        |                                    message: '不能为空!'
+        |                                },
         |                                    integer: {
         |                                        message: '必须为整数！'
         |                                    }
@@ -508,6 +520,9 @@ object GetHtml {
         |                            },
         |                            required_quality:{
         |                                validators: {
+        |                                notEmpty: {
+        |                                    message: '不能为空!'
+        |                                },
         |                                    integer: {
         |                                        message: '必须为整数！'
         |                                    }
@@ -515,6 +530,9 @@ object GetHtml {
         |                            },
         |                            minlen:{
         |                                validators: {
+        |                                notEmpty: {
+        |                                    message: '不能为空!'
+        |                                },
         |                                    integer: {
         |                                        message: '必须为整数！'
         |                                    }
@@ -522,6 +540,9 @@ object GetHtml {
         |                            },
         |                            leading:{
         |                                validators: {
+        |                                notEmpty: {
+        |                                    message: '不能为空!'
+        |                                },
         |                                    integer: {
         |                                        message: '必须为整数！'
         |                                    }
@@ -529,6 +550,9 @@ object GetHtml {
         |                            },
         |                            trailing:{
         |                                validators: {
+        |                                notEmpty: {
+        |                                    message: '不能为空!'
+        |                                },
         |                                    integer: {
         |                                        message: '必须为整数！'
         |                                    }
@@ -536,6 +560,9 @@ object GetHtml {
         |                            },
         |                            crop:{
         |                                validators: {
+        |                                notEmpty: {
+        |                                    message: '不能为空!'
+        |                                },
         |                                    integer: {
         |                                        message: '必须为整数！'
         |                                    }
@@ -543,6 +570,9 @@ object GetHtml {
         |                            },
         |                            headcrop:{
         |                                validators: {
+        |                                notEmpty: {
+        |                                    message: '不能为空!'
+        |                                },
         |                                    integer: {
         |                                        message: '必须为整数！'
         |                                    }
@@ -550,6 +580,9 @@ object GetHtml {
         |                            },
         |                            m:{
         |                                validators: {
+        |                                notEmpty: {
+        |                                    message: '不能为空!'
+        |                                },
         |                                    integer: {
         |                                        message: '必须为整数！'
         |                                    }
@@ -557,6 +590,9 @@ object GetHtml {
         |                            },
         |                            M:{
         |                                validators: {
+        |                                notEmpty: {
+        |                                    message: '不能为空!'
+        |                                },
         |                                    integer: {
         |                                        message: '必须为整数！'
         |                                    }
@@ -564,6 +600,9 @@ object GetHtml {
         |                            },
         |                            x:{
         |                                validators: {
+        |                                notEmpty: {
+        |                                    message: '不能为空!'
+        |                                },
         |                                    numeric: {
         |                                        message: '必须为数字！'
         |                                    }

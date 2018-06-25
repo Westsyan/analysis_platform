@@ -1,5 +1,58 @@
 @(projectName:Seq[String])
+
 <div class="page-sidebar-wrapper">
+	<div class="page-sidebar navbar-collapse collapse">
+		<ul class="page-sidebar-menu " data-auto-scroll="true" data-slide-speed="200" id="projects">
+
+			<li class="sidebar-toggler-wrapper">
+					<!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+				<div class="sidebar-toggler">
+				</div>
+					<!-- END SIDEBAR TOGGLER BUTTON -->
+			</li>
+			<li style="height: 10px"></li>
+
+			<li id="home">
+				<a href='@routes.SampleController.home'>
+					<i class="fa fa-home"></i>
+					<span class="title">管理项目</span>
+					<span class='selected'></span>
+				</a>
+			</li>
+
+
+			@for(i <- projectName){
+				<li id="@i">
+					<a href='/project/uploadFile?projectname=@i'>
+						<i class='fa fa-align-justify'></i>
+						<span class="title">@i</span>
+						<span class='selected'></span>
+					</a>
+				</li>
+			}
+
+
+		</ul>
+	</div>
+</div>
+
+	<script>
+		$(function () {
+		    $.ajax({
+				url:"@routes.LoginController.selected()",
+				type: "get",
+				dataType: "json",
+				success : function (data) {
+					$("#" + data).addClass('active')
+				}
+			});
+
+		})
+
+	</script>
+
+
+@*<div class="page-sidebar-wrapper">
 	<div class="page-sidebar navbar-collapse collapse"  style="background-color: #5B616A;">
 		<ul class="page-sidebar-menu page-sidebar-menu-hover-submenu" data-auto-scroll="true" data-slide-speed="200" id="projects">
 
@@ -7,15 +60,16 @@
 				<a href="@routes.SampleController.home">
 						&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-home" style="font-size: 16px;color: #888888;"></i>
 					<input type="button"style="border: none;
-						color: #888888;font-size: 16px;margin-top: 5px;background-color: transparent;" value="项目管理"/>
+						color: #888888;font-size: 16px;margin-top: 5px;background-color: transparent;" value="管理项目"/>
 				</a>
 
 			</li>
+
 			<li style="height: 1px"></li>
 			@for(i <- projectName){
 				<li>
 					<a href='/project/uploadFile?projectname=@i'>
-						<i class='fa fa-bar-chart-o'></i>
+						<i class='fa fa-align-justify'></i>
 						<span class='title'>@i</span>
 						<span class='selected'></span>
 					</a>
@@ -24,7 +78,7 @@
 
 		</ul>
 	</div>
-</div>
+</div>*@
 
 
 

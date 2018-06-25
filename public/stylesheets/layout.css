@@ -53,8 +53,8 @@ Page Header
     border: 0px;
     padding: 0px;
     box-shadow: none;
-    height: 56px;
-    min-height: 46px;
+    height: 40px;
+    min-height: 40px;
     filter: none;
     background-image: none;
     /* Fixed header */
@@ -181,7 +181,7 @@ Page Header
 .page-header.navbar .top-menu .navbar-nav > li.dropdown {
     margin: 0px;
     padding: 0px 4px;
-    height: 46px;
+    height: 40px;
     display: inline-block;
 }
 .page-header.navbar .top-menu .navbar-nav > li.dropdown:last-child {
@@ -367,7 +367,7 @@ Page Header
 }
 .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle > .username {
     display: inline-block;
-    font-size: 13px;
+    font-size: 10px;
     font-weight: 300;
 }
 .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle > img {
@@ -1149,7 +1149,7 @@ Page sidebar
     .page-sidebar {
         width: 235px;
         float: left;
-        position: relative;
+        position: absolute;
         margin-right: -100%;
     }
     .page-full-width .page-sidebar {
@@ -2075,7 +2075,7 @@ Page content
     /* 992px */
     /* Page content */
     .page-content-wrapper {
-        float: left;
+        float: inherit;
         width: 100%;
     }
     .page-content-wrapper .page-content {
@@ -2184,8 +2184,7 @@ Page footer
     clear: both;
 }
 .page-footer .page-footer-inner {
-    float: left;
-    display: inline-block;
+    margin-top: -7px;
 }
 .page-footer-fixed.page-footer-fixed-mobile .page-footer {
     position: fixed;

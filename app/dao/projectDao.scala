@@ -46,11 +46,19 @@ class projectDao  @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     db.run(Project.filter(_.id === proId).delete).map(_=>())
   }
 
+  def deleteByUserid(id:Int) : Future[Unit] = {
+    db.run(Project.filter(_.accountid === id).delete).map(_ => ())
+  }
+
   def updatePronameById(id:Int,proname:String) : Future[Unit] = {
     db.run(Project.filter(_.id === id).map(_.projectname).update(proname)).map(_=>())
   }
 
   def updateDescriptionById(id:Int,description:String) : Future[Unit] = {
     db.run(Project.filter(_.id === id).map(_.description).update(description)).map(_=>())
+  }
+
+  def getById(id:Int) : Future[ProjectRow] = {
+    db.run(Project.filter(_.id === id).result.head)
   }
 }

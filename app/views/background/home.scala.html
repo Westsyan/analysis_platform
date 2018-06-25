@@ -5,16 +5,19 @@
     <style>
 
         .instr{
-        text-overflow : ellipsis;
-        height:80px;
-            width: 90%;
-        overflow:hidden;
+            float:left;
+            word-wrap:break-word;
+            position: relative;
+            line-height: 20px;
+            max-height: 40px;
+            overflow: hidden;
+            width:150px;
         }
 
             .borders {
                 width: 300px;
                 height: 250px;
-                border: 1px solid #EAECEE;
+                border: 1px solid #333333;
                 border-radius: 10px 10px 10px 10px;
                 margin: 50px 50px 50px 50px;
                 float: left;
@@ -27,7 +30,7 @@
                 margin: 50px 50px 50px 50px;
                 font-size: 30px;
                 background-color: transparent;
-                color: gray;
+                color: #333333;
                 border: 0px;
 
             }
@@ -61,14 +64,13 @@
             float: right;
             margin-right: 10px;
             margin-top: -10px;
-            color: lightgrey;
+            color: #333333;
         }
 
         .revamp:hover {
             border: solid 1px;
-            border-color: lightgrey;
+            border-color: #333333;
             border-radius: 5px 5px 5px 5px;
-            color: dimgrey;
         }
 
 
@@ -92,23 +94,25 @@
                         @for(p <- project) {
                             <div class="borders">
                                 <div style="margin-left: 2em;">
-                                    <button class="delete" onclick="openDelete(this)" value="@p.projectname" id="@p.id">
+                                    <input class="@p.id" value="@p.description" style="display: none">
+                                    <button class="revamp" onclick="openDelete(this)" title="删除项目" value="@p.projectname" id="@p.id">
                                         <i class="fa fa-trash"></i>
                                     </button>
 
-                                    <button class="revamp" onclick="updateDes(this)"  title="修改项目说明" value="@p.description" id="@p.id">
+@*                                    <button class="revamp" onclick="updateDes(this)"  title="修改项目说明" value="@p.description" id="@p.id">
                                             <i class="fa fa-repeat"></i>
-                                        </button>
-                                    <button class="revamp" onclick="updateProname(this)"  title="修改项目名" value="@p.projectname" id="@p.id">
+                                        </button>*@
+                                    <button class="revamp" onclick="updateProname(this)"  title="编辑项目信息" value="@p.projectname" id="@p.id">
                                         <i class="fa fa-pencil"></i>
                                     </button>
 
                                     <h3><a href='@routes.SampleController.enterHome(p.projectname)'>@p.projectname</a></h3>
 
-                                    <div style="margin-top: 20px;">样品数量：<b>@p.samcount</b></div>
-                                    <div style="margin-top: 20px;">创建日期：<b>@p.createdata.toLocalDate</b></div>
-                                    <div class="instr" title="@p.description">
-                                        <p style="margin-top: 20px;">项目说明：@p.description</p>
+                                    <div style="margin-top: 20px;">样品数量：@p.samcount</div>
+                                    <div style="margin-top: 20px;">创建日期：@p.createdata.toLocalDate</div>
+                                    <div style="margin-top: 20px;">
+                                        <p style="float: left">项目描述：</p>
+                                        <p title="@p.description" class="instr">@p.description</p>
                                     </div>
                                 </div>
                             </div>
@@ -173,7 +177,8 @@
                 <div class="modal-header bg-primary">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
                     <h4 class="modal-title">
-                        <span id="lblAddTitle" style="font-weight: bold">修改项目名：</span>
+                        <i class="fa fa-pencil"></i>
+                        <span id="lblAddTitle" style="font-weight: bold">编辑项目信息：</span>
                     </h4>
                 </div>
                 <form id="updateproForm" data-toggle="validator">
@@ -181,14 +186,6 @@
                         <div class="row-fluid">
 
                             <div class="row">
-                                <div class="col-sm-8">
-                                    <div class="form-group">
-                                        <label class="control-label">
-                                            项目名：
-                                        </label>
-                                        <input class="form-control indent" id="proname" name="proname" readonly="readonly" >
-                                    </div>
-                                </div>
 
                                 <div class="col-sm-8" style="display: none;">
                                     <div class="form-group">
@@ -199,14 +196,25 @@
                                     </div>
                                 </div>
 
+                                <div class="col-sm-8">
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            项目名：
+                                        </label>
+                                        <input class="form-control indent" id="proname" name="proname">
+                                    </div>
+                                </div>
 
                                 <div class="col-sm-8">
                                     <div class="form-group">
                                         <label class="control-label">
-                                            新的项目名: </label>
-                                        <input class="form-control indent" name="newproname" id="newproname" >
+                                            项目描述：
+                                        </label>
+                                        <textarea class='form-control indent' style="border-radius: 4px" rows="4"
+                                        name='description1' id='description1'></textarea>
                                     </div>
                                 </div>
+
                             </div>
 
                         </div>
@@ -280,10 +288,10 @@
             <div class="modal-content">
                 <div class="modal-header bg-primary">
                     <h4 class="modal-title" align="center" id="title1">
-                        <span style="font-weight: bold">删除项目
+                        <span style="font-weight: bold">请确认是否删除项目"
                             <b id="dsample">
 
-                            </b>
+                            </b>"?
                         </span>
                     </h4>
                     <h4 class="modal-title" align="center" id="title2" style="display: none;">
@@ -326,12 +334,14 @@
             }
 
             function updateProname(obj) {
-                var name = obj.value;
+                var v = obj.value;
                 var id = obj.id;
+                var n = $("." + id).val();
                 $("#proname").empty();
-                $("#proname").val(name);
+                $("#proname").val(v);
                 $("#proId").val(id);
-                console.log(id);
+                $("#description1").empty();
+                $("#description1").val(n);
                 $("#updateProname").modal("show")
             }
 
@@ -364,8 +374,12 @@
                                     url: '/project/checkProjectname',
                                     message: '项目名重复，请重新输入！'
                                 },
+                                regexp: {
+                                    regexp: '^[A-Za-z0-9"_"]{1,12}$',
+                                    message: '12个以内字符，可使用字母、数字、下划线！'
+                                }
                             }
-                        },
+                        }
                     }
                 });
                 $('#updateproForm').formValidation({
@@ -376,22 +390,22 @@
                         validating: 'glyphicon glyphicon-refresh'
                     },
                     fields: {
-                        newproname: {
+                        proname: {
                             validators: {
                                 notEmpty: {
                                     message: '项目名不能为空!'
                                 },
-                                different: {
-                                    field: 'projectname',
-                                    message: '不能与原项目名相同'
+                                regexp: {
+                                    regexp: '^[A-Za-z0-9"_"]{1,12}$',
+                                    message: '12个以内字符，可使用字母、数字、下划线！'
                                 },
                                 remote: {
                                     type: 'POST',
                                     url: '/project/checkNewproname',
                                     message: '项目名重复，请重新输入！'
-                                },
+                                }
                             }
-                        },
+                        }
                     }
                 })
             }
@@ -399,7 +413,7 @@
             function addProject() {
                 var form = $("#form")
                 var fv = form.data("formValidation")
-                fv.validate()
+                fv.validate();
                 if (fv.isValid()) {
                     $.ajax({
                         url: "@routes.ProjectController.addProject()",
@@ -431,7 +445,7 @@
                 deleting();
                 $.ajax({
                     url: "/project/deleteProject?id=" + id,
-                    type: "get",
+                    type: "delete",
                     dataType: "json",
                     success: function (data) {
                         if (data.valid == "true") {

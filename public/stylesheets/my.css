@@ -212,14 +212,19 @@ img {
     margin-left: 2em;
     margin-bottom: 10px;
 }
+.indent-3 {
+    margin-left: 2em;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
 
-.title {
+/*.title {
     z-index: 2;
     color: #fff;
     text-indent: 10px;
     font-size: 12px;
     line-height: 30px;
-}
+}*/
 
 .pager {
     z-index: 3;
@@ -806,7 +811,7 @@ button:focus, input[type="submit"] {
 }
 
 .page-footer {
-    background: #195e4f;
+    background: #333333;
     color: #fff;
 }
 .page-footer {
@@ -828,3 +833,92 @@ button:focus, input[type="submit"] {
 .modal-margin{
     margin-top: 60px;
 }
+
+.modal-body {
+    overflow-y: scroll;
+    max-height: 650px;
+
+}
+
+
+/*内存*/
+.disk-text{
+    margin-top: -18px;
+    margin-left: 140px;
+    color: white;
+    float: left;
+}
+
+.process-bar
+{
+    width:120px;
+    margin-top: 15px;
+    margin-right: 200px;
+}
+.pb-wrapper
+{
+    border:1px solid gray;
+    border-style:solid none;
+    position:relative;
+    background:#cfd0d2;
+}
+.pb-container
+{
+    border:1px solid gray;
+    border-style:none solid;
+    height:16px;
+    position:relative;
+    left:-1px;
+    margin-right:-2px;
+    font:1px/0 arial;
+    padding:1px;
+}
+.pb-highlight
+{
+    position:absolute;
+    left:0;
+    top:0;
+    _top:1px;
+    width:100%;
+    opacity:0.6;
+    filter:alpha(opacity=60);
+    height:6px;
+    background:white;
+    font-size:1px;
+    line-height:0;
+    z-index:1
+}
+.pb-text
+{
+    width:100%;
+    position:absolute;
+    left:0;
+    top:0;
+    text-align:center;
+    font:10px/12px arial;
+}
+.pb-value
+{
+    height:100%;
+    background:#239FFD;
+}
+.pb-text
+{
+    color:black;
+    font:16px/16px arial
+}
+/* -- 以下是重写的皮肤 -- */
+/* green */
+.skin-green .pb-wrapper
+{
+    border-color:#666;
+    border-top-color:#239FFD;
+}
+.skin-green .pb-container
+{
+    border-color:#666;
+    border-left-color:#239FFD;
+}
+.skin-green .pb-text{ color:black }
+
+

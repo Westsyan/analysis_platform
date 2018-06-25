@@ -1073,3 +1073,15 @@ function deleteAfter() {
     $("#btn3").show();
 }
 
+function getDisk() {
+    $.ajax({
+        url:"/unix/getDisk",
+        type: "get",
+        dataType:"json",
+        success: function (data) {
+            $(".pb-value").width( data.per +'%');
+            $(".pb-text").html(data.per +'%');
+            $(".disk-text").html("已用 "+data.use+" / 总共 " + data.all)
+        }
+    })
+}

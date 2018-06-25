@@ -26,7 +26,7 @@ Page Header
 }
 .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle .username {
     color: white;
-    font-size: 26px;
+    font-size: 16px;
 }
 .page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle > i {
     color: #999999;
@@ -581,7 +581,7 @@ Quick Sidebar Content
 Page Footer
 ******/
 .page-footer .page-footer-inner {
-    color: #a3a3a3;
+    color: white;
 }
 .page-footer-fixed .page-footer {
     background-color: #2b2b2b;

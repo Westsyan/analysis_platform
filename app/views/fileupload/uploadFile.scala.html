@@ -46,7 +46,7 @@
                                     <label class="col-sm-12">fastq 1 文件:</label>
                                     <div class="col-sm-6 indent">
                                         <input id="input-1" type="file" class="file" name="file1" data-show-preview="false"
-                                        data-show-upload="false" accept=".fq,.fq.gz,.fastq,.fastq.gz" >
+                                        data-show-upload="false" accept=".fq,.fastq,.gz" >
                                     </div>
                                 </div>
 
@@ -54,7 +54,7 @@
                                     <label class="col-sm-12">fastq 2 文件:</label>
                                     <div class=" col-sm-6 indent">
                                         <input id="input-2" type="file" class="file" name="file2" data-show-preview="false"
-                                        data-show-upload="false" accept=".fq,.fq.gz,.fastq,.fastq.gz" >
+                                        data-show-upload="false" accept=".fq,.fastq,.gz" >
                                     </div>
                                 </div>
 
@@ -351,8 +351,8 @@
                                         message: '不能为空!'
                                     },
                                     regexp: {
-                                        regexp: '^[A-Za-z0-9]{1,20}$',
-                                        message: '请不要输入特殊字符,！'
+                                        regexp: '^[A-Za-z0-9"_"]{1,12}$',
+                                        message: '12个以内字符，可使用字母、数字、下划线！'
                                     },
                                     remote: {
                                         type: 'POST',
@@ -386,6 +386,9 @@
                             },
                             seed_mismatches:{
                                 validators: {
+                                    notEmpty: {
+                                        message: '不能为空！'
+                                    },
                                     integer: {
                                         message: '必须为整数！'
                                     }
@@ -393,6 +396,9 @@
                             },
                             palindrome_clip_threshold:{
                                 validators: {
+                                    notEmpty: {
+                                        message: '不能为空！'
+                                    },
                                     integer: {
                                         message: '必须为整数！'
                                     }
@@ -400,6 +406,9 @@
                             },
                             simple_clip_threshold:{
                                 validators: {
+                                    notEmpty: {
+                                        message: '不能为空！'
+                                    },
                                     integer: {
                                         message: '必须为整数！'
                                     }
@@ -407,6 +416,9 @@
                             },
                             window_size:{
                                 validators: {
+                                    notEmpty: {
+                                        message: '不能为空！'
+                                    },
                                     integer: {
                                         message: '必须为整数！'
                                     }
@@ -414,6 +426,9 @@
                             },
                             required_quality:{
                                 validators: {
+                                    notEmpty: {
+                                        message: '不能为空！'
+                                    },
                                     integer: {
                                         message: '必须为整数！'
                                     }
@@ -421,6 +436,9 @@
                             },
                             minlen:{
                                 validators: {
+                                    notEmpty: {
+                                        message: '不能为空！'
+                                    },
                                     integer: {
                                         message: '必须为整数！'
                                     }
@@ -428,6 +446,9 @@
                             },
                             leading:{
                                 validators: {
+                                    notEmpty: {
+                                        message: '不能为空！'
+                                    },
                                     integer: {
                                         message: '必须为整数！'
                                     }
@@ -435,6 +456,9 @@
                             },
                             trailing:{
                                 validators: {
+                                    notEmpty: {
+                                        message: '不能为空！'
+                                    },
                                     integer: {
                                         message: '必须为整数！'
                                     }
@@ -442,6 +466,9 @@
                             },
                             crop:{
                                 validators: {
+                                    notEmpty: {
+                                        message: '不能为空！'
+                                    },
                                     integer: {
                                         message: '必须为整数！'
                                     }
@@ -449,6 +476,9 @@
                             },
                             headcrop:{
                                 validators: {
+                                    notEmpty: {
+                                        message: '不能为空！'
+                                    },
                                     integer: {
                                         message: '必须为整数！'
                                     }
@@ -456,6 +486,9 @@
                             },
                             m:{
                                 validators: {
+                                    notEmpty: {
+                                        message: '不能为空！'
+                                    },
                                     integer: {
                                         message: '必须为整数！'
                                     }
@@ -463,6 +496,9 @@
                             },
                             M:{
                                 validators: {
+                                    notEmpty: {
+                                        message: '不能为空！'
+                                    },
                                     integer: {
                                         message: '必须为整数！'
                                     }
@@ -470,6 +506,9 @@
                             },
                             x:{
                                 validators: {
+                                    notEmpty: {
+                                        message: '不能为空！'
+                                    },
                                     numeric: {
                                         message: '必须为数字！'
                                     }
@@ -567,14 +606,22 @@
                     }
                 }
 
+
+
+                var time = "";
+
                 function Running() {
+                    var date = new Date();
+                    time = date.getTime();
                     var form = $("#UpdateForm")
                     var fv = form.data("formValidation")
                     fv.validate()
                     if (fv.isValid()) {
-                        var index = layer.msg('文件上传中', {
+                        var element = "<div id='content'><span id='info'>文件上传中： </span><span id='progress'></span></div>"
+                        var index = layer.msg(element, {
                             icon: 16
-                            ,shade: 0.01
+                            ,shade: 0.01,
+                            time: 20000000
                         });
                         var form = new FormData($("#UpdateForm")[0]);
                         $.ajax({
@@ -584,27 +631,40 @@
                             processData: false,
                             contentType: false,
                             data: form,
-                            success: function (data) {
-                                layer.close(index);
-                                console.log(data.valid);
-                                if (data.valid == "false") {
-                                    swal({
-                                        title: "错误!",
-                                        text: data.message,
-                                        type: "error",
-                                        confirmButtonText: "确定"
-                                    })
-                                } else {
-                                    var sample = $("#sample").val();
-                                    window.location.replace("/project/toDate?proname=@proname&sample=" + sample)
+                            xhr: function(){ //获取ajaxSettings中的xhr对象，为它的upload属性绑定progress事件的处理函数
+
+                                myXhr = $.ajaxSettings.xhr();
+                                if(myXhr.upload){ //检查upload属性是否存在
+                                    //绑定progress事件的回调函数
+                                    myXhr.upload.addEventListener('progress',progressHandlingFunction, false);
                                 }
+                                return myXhr; //xhr对象返回给jQuery使用
+                            },
+                            success: function () {
+                                        window.location.href="/project/toDate?proname=@proname";
+
                             }
                         });
                     }
                 }
 
 
-                $("#input-1").fileinput({
+             function progressHandlingFunction(e) {
+                 if (e.lengthComputable) {
+                     $('#progress').attr({value : e.loaded, max : e.total}); //更新数据到进度条
+                     var mydate = new Date();
+                     var time1 = mydate.getTime();
+
+                     var speed = (e.loaded/1024)/((time1-time)/1000)
+
+                     var percent = e.loaded/e.total*100;
+                     $('#progress').html(percent.toFixed(2) + "%   " + parseInt(speed) + "KB/S" );
+                     $('#progress').css('width', percent.toFixed(2) + "%");
+                 }
+             }
+
+
+             $("#input-1").fileinput({
                     showPreview: false,
                     browseLabel: "选择文件"
                 });

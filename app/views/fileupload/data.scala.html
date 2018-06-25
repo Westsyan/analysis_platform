@@ -1,5 +1,4 @@
-@import models.Tables.SampleRow
-@(sample: Seq[SampleRow], projectName: Seq[String], proname: String, samp: String)(implicit session: Session)
+@(projectName: Seq[String], proname: String )(implicit session: Session)
 @fileupload.main(proname, projectName, proname) {
 
     <style>
@@ -225,12 +224,6 @@
                 formValidation();
                 tableInformation();
 
-                $.ajax({
-                    url: "/project/isRunCmd?proname=@proname&sample=@samp",
-                    type: "post"
-                })
-
-
                 window.setInterval(function () {
                     $(".state").each(function (n, value) {
                         var st = value.value;
@@ -258,6 +251,10 @@
                                 different: {
                                     field: 'samplename',
                                     message: '不能与原样品名相同'
+                                },
+                                regexp: {
+                                    regexp: '^[A-Za-z0-9"_"]{1,20}$',
+                                    message: '请不要输入特殊字符！'
                                 },
                                 remote: {
                                     type: 'POST',
@@ -289,7 +286,7 @@
                     });
                     $.ajax({
                         url: "@routes.SampleController.updateSample()",
-                        type: "post",
+                        type: "put",
                         dataType: "json",
                         data: $("#updateForm").serialize(),
                         success: function (data) {
@@ -333,7 +330,7 @@
                 deleting();
                 $.ajax({
                     url: "/project/deleteSample?id=" + id,
-                    type: "get",
+                    type: "delete",
                     dataType: "json",
                     success: function (data) {
                         if (data.valid == "true") {

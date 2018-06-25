@@ -4,15 +4,19 @@ import java.io.File
 import javax.inject.Inject
 
 import dao._
+import org.apache.commons.io.FileUtils
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json.Json
 import play.api.mvc._
-import utils.Utils
+import utils.{ExecCommand, Utils}
 
+import scala.collection.JavaConverters._
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
+
+
 
 class LoginController @Inject()(admindao: adminDao,projectdao:projectDao,sampledao:sampleDao) extends Controller {
 
@@ -41,7 +45,7 @@ class LoginController @Inject()(admindao: adminDao,projectdao:projectDao,sampled
   }
 
   def toIndex(account:String) : Action[AnyContent]=Action{ implicit request=>
-        Redirect(routes.SampleController.home()).withSession(request.session + ("user" -> account))
+        Redirect(routes.SampleController.home()).withSession(request.session + ("user" -> "March") +("id" -> "2"))
   }
 
   def index = Action{ implicit request =>
@@ -94,7 +98,33 @@ class LoginController @Inject()(admindao: adminDao,projectdao:projectDao,sampled
     }
   }
 
+  def selected = Action{implicit request=>
+    val route = request.headers.toMap.filter(_._1 == "Referer").map(_._2).head.head
+    val last = route.split("/").last
+    val id =if(last.contains("proname")){
+      last.split("=").last
+    }else{last}
+    Ok(Json.toJson(id))
+  }
 
+  def getDisk = Action { implicit request =>
+    val sh = "sh /mnt/sdb/platform/getDisk.sh"
+    val command = new ExecCommand
+    command.exec(sh)
+    val buffer = FileUtils.readLines(new File("/mnt/sdb/platform/disk.txt")).asScala
+    val head = buffer.head.split(" ")
+    val all = head.head
+    val alls = all.split("T").head.toDouble
+    val use = head.last
+    val uses = use.split("T").head.split("G").head.toDouble
+    val per = if (uses > 20) {
+      uses / alls / 1024 * 100
+    } else {
+      uses / alls * 100
+    }
+    val json = Json.obj("all" -> all, "use" -> use, "per" -> per.formatted("%.2f"))
+    Ok(Json.toJson(json))
+  }
 
 
 

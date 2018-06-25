@@ -16,7 +16,7 @@
 
                     <div class="portlet-title">
                         <div class="caption">
-                            OTU
+                            OTU聚类和分类学注释分析
                         </div>
                     </div>
 
@@ -25,9 +25,9 @@
                         <form class="registration-form form-horizontal" id="UpdateForm"
                         accept-charset="UTF-8">
 
-                            <div class="form-group">
-                                <h4 class="col-sm-12">任务信息:</h4>
-                            </div>
+                            @* <div class="form-group">
+                            <h4 class="col-sm-12">任务信息:</h4>
+                            </div>*@
 
                             <div class="form-group" style="display: none;">
                                 <div class="col-sm-6 indent">
@@ -37,7 +37,7 @@
 
                             <div class="form-group">
                                 <label class="col-sm-12">任务名:</label>
-                                <div class="col-sm-6 indent">
+                                <div class="col-sm-4 indent">
                                     <input name="otuname" id="otuname" class="form-control" />
                                     <small style="color: red;
                                         display: none;" id="remote" class="help-block" data-fv-validator="callback" data-fv-for="sample[]" data-fv-result="INVALID">
@@ -46,8 +46,8 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="col-sm-12">请选择样品名:</label>
-                                <div class="col-sm-6 indent">
+                                <label class="col-sm-12">请选择输入样品:</label>
+                                <div class="col-sm-4 indent">
                                     <select name="sample[]" id="sample" class="checkbox form-control phenotypeName" multiple></select>
                                 </div>
                                 <div class="col-sm-2" style="margin-top: 5px;">
@@ -56,11 +56,8 @@
                             </div>
 
                             <div class="form-group">
-                                <h4 class="col-sm-12">参数设置:</h4>
-                            </div>
-
-                            <div class="form-group">
-                                <h5 style="margin-left: 2em;">Usearch otu cluster and mapping
+                                <label class="col-sm-6">Usearch otu cluster and mapping(OTU聚类和丰度计算参数设置):</label>
+                                <label class="col-sm-1" style="margin-left: -15%">
                                     <a id="down-1" style="margin-left: 2em">
                                         <i class="fa fa-arrow-down"></i>
                                     </a>
@@ -68,51 +65,60 @@
                                         display: none">
                                         <i class="fa fa-arrow-up"></i>
                                     </a>
-                                </h5>
+                                </label>
                             </div>
 
-                            <div id="set-1" style="display: none">
+                            <div id="set-1" style="display: none" class="indent">
 
 
                                 <div class="form-group" >
-                                    <label class="col-sm-7">
-                                        Usearch 'derep_prefix' command: Specify the minimum sequence length to be included in the output.</label>
-                                    <div class="col-sm-6 indent">
-                                        <input name="minseqlength" id="minseqlength" class="form-control" value="200" />
+                                    <p class="col-sm-5" style="text-indent: 1em;">
+                                        Usearch 'derep_prefix' command: Specify the minimum sequence length to be included in the output.</p>
+                                    <div class="col-sm-12 indent-3">
+                                        <div class="col-sm-4">
+                                            <input name="minseqlength" id="minseqlength" class="form-control" value="200" />
+                                        </div>
                                     </div>
                                 </div>
 
                                 <div class="form-group" >
-                                    <label class="col-sm-7">
-                                        Usearch 'cluster_otus' command: Specifies the OTU 'radius' as a percentage, i.e. the minimum difference between an OTU member sequence and the representative sequence of that OTU. Default is 3.0, corresponding to a minimum identity of 97%.</label>
-                                    <div class="col-sm-6 indent">
-                                        <input name="otu_radius_pct" id="otu_radius_pct" class="form-control" value="3.0" />
+                                    <p class="col-sm-5" style="text-indent: 1em;">
+                                        Usearch 'cluster_otus' command: Specifies the OTU 'radius' as a percentage, i.e. the minimum difference between an OTU member sequence and the representative sequence of that OTU. Default is 3.0, corresponding to a minimum identity of 97%.</p>
+                                    <div class="col-sm-12 indent-3">
+                                        <div class="col-sm-4">
+                                            <input name="otu_radius_pct" id="otu_radius_pct" class="form-control" value="3.0" />
+                                        </div>
                                     </div>
                                 </div>
 
                                 <div class="form-group" >
-                                    <label class="col-sm-7">
-                                        Usearch 'usearch_global' command: Specifies the minimum identity between a query sequence(raw data) and a database sequence(otu representative sequence)</label>
-                                    <div class="col-sm-6 indent">
-                                        <input name="id" id="id" class="form-control" value="0.97" />
+                                    <p class="col-sm-5" style="text-indent: 1em;">
+                                        Usearch 'usearch_global' command: Specifies the minimum identity between a query sequence(raw data) and a database sequence(otu representative sequence)</p>
+                                    <div class="col-sm-12 indent-3">
+                                        <div class="col-sm-4">
+                                            <input name="id" id="id" class="form-control" value="0.97" />
+                                        </div>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-sm-12">
-                                        cluster_otus(cluster) and usearch_global(mapping) strand:</label>
-                                    <div class="col-sm-6 indent">
-                                        <select class="form-control" name="strand">
-                                            <option value="plus" selected>plus</option>
-                                            <option value="both">both</option>
-                                        </select>
+                                    <p class="col-sm-5" style="text-indent: 1em;">
+                                        cluster_otus(cluster) and usearch_global(mapping) strand:</p>
+                                    <div class="col-sm-12 indent-3">
+                                        <div class="col-sm-4">
+                                            <select class="form-control" name="strand">
+                                                <option value="plus" selected>plus</option>
+                                                <option value="both">both</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
 
                             </div>
 
                             <div class="form-group">
-                                <h5 style="margin-left: 2em;">RDP classifier assign taxonomy
+                                <label class="col-sm-6">RDP classifier assign taxonomy(分类学注释参数设置):</label>
+                                <label class="col-sm-1" style="margin-left: -15%">
                                     <a id="down-2" style="margin-left: 2em">
                                         <i class="fa fa-arrow-down"></i>
                                     </a>
@@ -120,49 +126,80 @@
                                         display: none">
                                         <i class="fa fa-arrow-up"></i>
                                     </a>
-                                </h5>
+                                </label>
                             </div>
 
-                            <div id="set-2" style="display: none">
+                            <div id="set-2" style="display: none" class="indent">
+
+                                <div class="form-group">
+                                    <p class="col-sm-5" style="text-indent: 1em;">
+                                        Select Database:</p>
+                                    <div class="col-sm-12 indent-3">
+                                        <div class="col-sm-4">
+                                            <select class="form-control" name="db">
+                                                <option value="greengenes.16s">greengenes.16s</option>
+                                                <option value="greengenes.16s_archaea">greengenes.16s_archaea</option>
+                                                <option value="greengenes.16s_bacteria">greengenes.16s_bacteria</option>
+                                                <option value="rdp.16s">rdp.16s</option>
+                                                <option value="rdp.16s_archaea">rdp.16s_archaea</option>
+                                                <option value="rdp.16s_bacteria">rdp.16s_bacteria</option>
+                                                <option value="silva.16s">silva.16s</option>
+                                                <option value="silva.16s_archaea">silva.16s_archaea</option>
+                                                <option value="silva.16s_bacteria">silva.16s_bacteria</option>
+                                                <option value="silva.18s_eukaryota">silva.18s_eukaryota</option>
+                                                <option value="silva">silva</option>
+                                                <option value="unite.its_fungi">unite.its_fungi</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
 
 
                                 <div class="form-group">
-                                    <label class="col-sm-12">
-                                        Taxon assignment method:</label>
-                                    <div class="col-sm-6 indent">
-                                        <select class="form-control" name="method" onchange="change(this)">
-                                            <option value="rdp" selected>RDP Classifier</option>
-                                            <option value="uclust">Uclust consensus taxonomy assigner</option>
-                                        </select>
+                                    <p class="col-sm-5" style="text-indent: 1em;">
+                                        Taxon assignment method:</p>
+                                    <div class="col-sm-12 indent-3">
+                                        <div class="col-sm-4">
+                                            <select class="form-control" name="method" onchange="change(this)">
+                                                <option value="rdp">RDP Classifier</option>
+                                                <option value="uclust" selected>Uclust consensus taxonomy assigner</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
 
 
-                                <div id="rdp-1">
-                                    <div class="form-group" >
+                                <div id="rdp-1" style="display: none;">
+                                    <p class="col-sm-5" style="text-indent: 1em;">
                                         <label class="col-sm-7">
                                             Minimum confidence to record an assignment, used for rdp method </label>
-                                        <div class="col-sm-6 indent">
-                                            <input name="c" id="c" class="form-control" value="0.7" />
+                                        <div class="col-sm-12 indent-3">
+                                            <div class="col-sm-4">
+                                                <input name="c" id="c" class="form-control" value="0.7" />
+                                            </div>
                                         </div>
-                                    </div>
+                                    </p>
                                 </div>
 
-                                <div id="uclust-1" style="display: none;">
+                                <div id="uclust-1" >
                                     <div class="form-group" >
-                                        <label class="col-sm-7">
-                                            Number of database hits to consider when making an assignment, used for uclust method </label>
-                                        <div class="col-sm-6 indent">
-                                            <input name="uma" id="uma" class="form-control" value="3" />
+                                        <p class="col-sm-5" style="text-indent: 1em;">
+                                            Number of database hits to consider when making an assignment, used for uclust method </p>
+                                        <div class="col-sm-12 indent-3">
+                                            <div class="col-sm-4">
+                                                <input name="uma" id="uma" class="form-control" value="3" />
+                                            </div>
                                         </div>
                                     </div>
 
 
                                     <div class="form-group" >
-                                        <label class="col-sm-7">
-                                            Minimum percent similarity (expressed as a fraction between 0 and 1) to consider a database match a hit, used for uclust method </label>
-                                        <div class="col-sm-6 indent">
-                                            <input name="s" id="s" class="form-control" value="0.9" />
+                                        <p class="col-sm-5" style="text-indent: 1em;">
+                                            Minimum percent similarity (expressed as a fraction between 0 and 1) to consider a database match a hit, used for uclust method </p>
+                                        <div class="col-sm-12 indent-3">
+                                            <div class="col-sm-4">
+                                                <input name="s" id="s" class="form-control" value="0.9" />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -170,11 +207,10 @@
 
                             </div>
 
-
                             <div class="form-group">
-                                <div class = "actions col-sm-offset-1 col-sm-4">
-                                    <button type="button" class="btn btn-primary" style="width: 90%;" id="search" onclick="Running()">
-                                        应用</button>
+                                <div class = "actions indent col-sm-4">
+                                    <button type="button" class="btn btn-primary" style="width: 100%;" id="search" onclick="Running()">
+                                        运行</button>
                                 </div>
                             </div>
                         </form>
@@ -211,7 +247,6 @@
                     success: function (data) {
                         $("#sample").select2(
                                 {
-                                    placeholder: "选择样品",
                                     data: data,
                                     closeOnSelect: false,
                                 }
@@ -245,6 +280,10 @@
                             validators: {
                                 notEmpty: {
                                     message: '不能为空!'
+                                },
+                                regexp: {
+                                    regexp: '^[A-Za-z0-9"_"]{1,25}$',
+                                    message: '25个以内字符，可使用字母、数字、下划线！'
                                 }
                             }
                         },
@@ -268,7 +307,6 @@
                                 },
                                 between: {
                                     min: 0,
-                                    max: 99999999999,
                                     message: "必须大于0！"
                                 }
                             }
@@ -373,8 +411,6 @@
             }
 
 
-
-
             function Running() {
                 var form = $("#UpdateForm");
                 var fv = form.data("formValidation");
@@ -404,7 +440,7 @@
                                         layer.close(index);
                                         if (data1.valid == "true") {
                                             var id = data1.id;
-                                            window.location.replace("/project/otuPage?proname=@proname&id=" + id)
+                                            window.location.href = "/project/otuPage?proname=@proname&id=" + id
                                         }
                                     }
                                 });
