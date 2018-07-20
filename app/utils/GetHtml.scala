@@ -29,11 +29,8 @@ object GetHtml {
          |                                </div>
          |
          |                                <div class="form-group">
-         |                                    <h4 class="col-sm-12">参数设置:</h4>
-         |                                </div>
+         |                                    <label class="col-sm-5">Trimmomatic PE(paired-end)(质控参数设置)</label>
          |
-         |                                <div class="form-group">
-         |                                    <h5 style="margin-left: 2em;">Trimmomatic PE(paired-end) - 1
          |                                        <a id="down-1" style="margin-left: 2em">
          |                                            <i class="fa fa-arrow-down"></i>
          |                                        </a>
@@ -41,14 +38,14 @@ object GetHtml {
          |                                            display: none">
          |                                            <i class="fa fa-arrow-up"></i>
          |                                        </a>
-         |                                    </h5>
+         |
          |                                </div>
          |
-         |                                <div id="set-1" style="display: none">
+         |                                <div id="set-1" style="display: none" class="indent">
          |
          |                                    <div class="form-group">
-         |                                        <label class="col-sm-12">
-         |                                            Input FASTQ quality file scores encoding type:</label>
+         |                                          <p class="col-sm-7">
+         |                                            Input FASTQ quality file scores encoding type:</p>
          |                                        <div class="col-sm-6 indent">
          |                                            <select class="form-control" name="encondingType">
           """.stripMargin
@@ -71,7 +68,7 @@ object GetHtml {
          |                                    </div>
          |
         |                                    <div class="form-group">
-         |                                        <label class="col-sm-12">Perform initial ILLUMINACLIP step?:</label>
+         |                                        <p class="col-sm-7">Perform initial ILLUMINACLIP step?:</p>
          |                                        <div class="col-sm-6 indent">
          |                                            <select class="form-control" name="stepMethod" onchange="stepChange(this)">
         """.stripMargin
@@ -85,7 +82,7 @@ object GetHtml {
         |
         |                                            <div id="stepValue" style="display: none;">
         |                                   <div class="form-group" >
-        |                                            <label class="col-sm-12 indent-2">Adapter sequences to use:</label>
+        |                                            <p class="col-sm-7 indent">Adapter sequences to use:</p>
         |                                            <div class="col-sm-6 indent-1">
         |                                                <select class="form-control" name="adapter">
       """.stripMargin
@@ -95,11 +92,11 @@ object GetHtml {
         |                                                      <option value="no" >No</option>
         |                                                    </select>
         |                                                </div>
-        |                                            </div>
+        |                                            </div>p
         |
         |                                            <div id="stepValue">
         |                                      <div class="form-group" >
-        |                                            <label class="col-sm-12 indent-2">Adapter sequences to use:</label>
+        |                                            <p class="col-sm-7 indent">Adapter sequences to use:</p>
         |                                            <div class="col-sm-6 indent-1">
         |                                                <select class="form-control" name="adapter">
       """.stripMargin
@@ -157,25 +154,25 @@ object GetHtml {
          |                                        </div>
          |
         |                                        <div class="form-group" >
-         |                                            <label class="col-sm-12 indent-2">
-         |                                                Maximum mismatch count which will still allow a full match to be performed:</label>
+         |                                            <p class="col-sm-7 indent">
+         |                                                Maximum mismatch count which will still allow a full match to be performed:</p>
          |                                            <div class="col-sm-6 indent-1">
          |                                                <input name="seed_mismatches" id="seed_mismatches" class="form-control" value="${row(4)}" />
          |                                            </div>
          |                                        </div>
          |
         |                                        <div class="form-group" >
-         |                                            <label class="col-sm-12 indent-2">
+         |                                            <p class="col-sm-7 indent">
          |                                                How accurate the match between the two 'adapter ligated' reads must be for PE palin
-         |                                                drome read alignment:</label>
+         |                                                drome read alignment:</p>
          |                                            <div class="col-sm-6 indent-1">
          |                                                <input name="palindrome_clip_threshold" id="palindrome_clip_threshold" class="form-control" value="${row(5)}" />
          |                                            </div>
          |                                        </div>
          |
         |                                        <div class="form-group" >
-         |                                            <label class="col-sm-12 indent-2">
-         |                                                How accurate the match between any adapter etc. sequence must be against a read:</label>
+         |                                            <p class="col-sm-7 indent">
+         |                                                How accurate the match between any adapter etc. sequence must be against a read:</p>
          |                                            <div class="col-sm-6 indent-1">
          |                                                <input name="simple_clip_threshold" id="simple_clip_threshold" class="form-control" value="${row(6)}" />
          |                                            </div>
@@ -183,7 +180,7 @@ object GetHtml {
          |                                    </div>
          |
         |                                    <div class="form-group">
-         |                                        <label class="col-sm-12">Perform Sliding window trimming (SLIDINGWINDOW)?:</label>
+         |                                        <p class="col-sm-7">Perform Sliding window trimming (SLIDINGWINDOW)?:</p>
          |                                        <div class="col-sm-6 indent">
          |                                            <select class="form-control" name="trimMethod" onchange="trimChange(this)">
         """.stripMargin
@@ -212,16 +209,16 @@ object GetHtml {
     html +=
       s"""
          |                                        <div class="form-group" >
-         |                                            <label class="col-sm-12 indent-2">
-         |                                                Number of bases to average across:</label>
+         |                                            <p class="col-sm-7 indent">
+         |                                                Number of bases to average across:</p>
          |                                            <div class="col-sm-6 indent-1">
          |                                                <input name="window_size" id="window_size" class="form-control" value="${row(8)}" />
          |                                            </div>
          |                                        </div>
          |
         |                                        <div class="form-group" >
-         |                                            <label class="col-sm-12 indent-2">
-         |                                                Average quality required:</label>
+         |                                            <p class="col-sm-7 indent">
+         |                                                Average quality required:</p>
          |                                            <div class="col-sm-6 indent-1">
          |                                                <input name="required_quality" id="required_quality" class="form-control" value="${row(9)}" />
          |                                            </div>
@@ -229,7 +226,7 @@ object GetHtml {
          |                                    </div>
          |
         |                                    <div class="form-group">
-         |                                        <label class="col-sm-12">Drop reads below a specified length (MINLEN)?:</label>
+         |                                        <p class="col-sm-7">Drop reads below a specified length (MINLEN)?:</p>
          |                                        <div class="col-sm-6 indent">
          |                                            <select class="form-control" name="minlenMethod" onchange="minlenChange(this)">
         """.stripMargin
@@ -259,8 +256,8 @@ object GetHtml {
     html +=
       s"""
          |                                        <div class="form-group" >
-         |                                            <label class="col-sm-12 indent-2">
-         |                                                Minimum length of reads to be kept:</label>
+         |                                            <p class="col-sm-7 indent">
+         |                                                Minimum length of reads to be kept:</p>
          |                                            <div class="col-sm-6 indent-1">
          |                                                <input name="minlen" id="minlen" class="form-control" value="${row(11)}" />
          |                                            </div>
@@ -269,8 +266,8 @@ object GetHtml {
         |                                    </div>
          |
         |                                    <div class="form-group">
-         |                                        <label class="col-sm-12">
-         |                                            Cut bases off the start of a read, if below a threshold quality (LEADING)?:</label>
+         |                                        <p class="col-sm-7">
+         |                                            Cut bases off the start of a read, if below a threshold quality (LEADING)?:</p>
          |                                        <div class="col-sm-6 indent">
          |                                            <select class="form-control" name="leadingMethod" onchange="leadingChange(this)">
          |""".stripMargin
@@ -295,8 +292,8 @@ object GetHtml {
     html +=
       s"""
          |                                        <div class="form-group" >
-         |                                            <label class="col-sm-12 indent-2">
-         |                                                Minimum quality required to keep a base:</label>
+         |                                            <p class="col-sm-7 indent">
+         |                                                Minimum quality required to keep a base:</p>
          |                                            <div class="col-sm-6 indent-1">
          |                                                <input name="leading" id="leading" class="form-control" value="${row(13)}" />
          |                                            </div>
@@ -304,8 +301,8 @@ object GetHtml {
          |                                    </div>
          |
         |                                    <div class="form-group">
-         |                                        <label class="col-sm-12">
-         |                                            Cut bases off the end of a read, if below a threshold quality (TRAILING)?:</label>
+         |                                        <p class="col-sm-7">
+         |                                            Cut bases off the end of a read, if below a threshold quality (TRAILING)?:</p>
          |                                        <div class="col-sm-6 indent">
          |                                            <select class="form-control" name="trailingMethod" onchange="trailingChange(this)">
         """.stripMargin
@@ -334,8 +331,8 @@ object GetHtml {
     html +=
       s"""
          |                                        <div class="form-group" >
-         |                                            <label class="col-sm-12 indent-2">
-         |                                                Minimum quality required to keep a base:</label>
+         |                                            <p class="col-sm-7 indent">
+         |                                                Minimum quality required to keep a base:</p>
          |                                            <div class="col-sm-6 indent-1">
          |                                                <input name="trailing" id="trailing" class="form-control" value="${row(15)}" />
          |                                            </div>
@@ -344,7 +341,7 @@ object GetHtml {
         |                                    </div>
          |
         |                                    <div class="form-group">
-         |                                        <label class="col-sm-12">Cut the read to a specified length (CROP):</label>
+         |                                        <p class="col-sm-7">Cut the read to a specified length (CROP):</p>
          |                                        <div class="col-sm-6 indent">
          |                                            <select class="form-control" name="cropMethod" onchange="cropChange(this)">
          |""".stripMargin
@@ -373,8 +370,8 @@ object GetHtml {
     html +=
       s"""
          |                                        <div class="form-group" >
-         |                                            <label class="col-sm-12 indent-2">
-         |                                                Number of bases to keep from the start of the read:</label>
+         |                                            <p class="col-sm-7 indent">
+         |                                                Number of bases to keep from the start of the read:</p>
          |                                            <div class="col-sm-6 indent-1">
          |                                                <input name="crop" id="crop" class="form-control" value="${row(17)}" />
          |                                            </div>
@@ -383,8 +380,8 @@ object GetHtml {
         |                                    </div>
          |
         |                                    <div class="form-group">
-         |                                        <label class="col-sm-12">
-         |                                            Cut the specified number of bases from the start of the read (HEADCROP)?:</label>
+         |                                        <p class="col-sm-7">
+         |                                            Cut the specified number of bases from the start of the read (HEADCROP)?:</p>
          |                                        <div class="col-sm-6 indent">
          |                                            <select class="form-control" name="headcropMethod" onchange="headcropChange(this)">
         """.stripMargin
@@ -414,8 +411,8 @@ object GetHtml {
     html +=
       s"""
          |                                        <div class="form-group" >
-         |                                            <label class="col-sm-12 indent-2">
-         |                                                Number of bases to remove from the start of the read:</label>
+         |                                            <p class="col-sm-7 indent">
+         |                                                Number of bases to remove from the start of the read:</p>
          |                                            <div class="col-sm-6 indent-1">
          |                                                <input name="headcrop" id="headcrop" class="form-control" value="${row(19)}" />
          |                                            </div>
@@ -424,7 +421,7 @@ object GetHtml {
          |                                </div>
          |
         |                                <div class="form-group">
-         |                                    <h5 style="margin-left: 2em;">Using FLASH to merge paired-end reads
+         |                                    <label class="col-sm-5">Using FLASH to merge paired-end reads(拼接参数设置) </label>
          |                                        <a id="down-2" style="margin-left: 2em">
          |                                            <i class="fa fa-arrow-down"></i>
          |                                        </a>
@@ -432,28 +429,27 @@ object GetHtml {
          |                                            display: none">
          |                                            <i class="fa fa-arrow-up"></i>
          |                                        </a>
-         |                                    </h5>
          |                                </div>
-         |                                <div id="set-2" style="display: none">
+         |                                <div id="set-2" style="display: none" class="indent">
          |                                    <div class="form-group" >
-         |                                        <label class="col-sm-12">
-         |                                            The minimum required overlap length between two reads to provide a confident overlap. Default:10bp.</label>
+         |                                        <p class="col-sm-7">
+         |                                            The minimum required overlap length between two reads to provide a confident overlap. Default:10bp.</p>
          |                                        <div class="col-sm-6 indent">
          |                                            <input name="m" id="m" class="form-control" value="${row(21)}" />
          |                                        </div>
          |                                    </div>
          |
         |                                    <div class="form-group" >
-         |                                        <label class="col-sm-12">
-         |                                            Maximum overlap length expected in approximately 90% of read pairs. It is by default set to 65bp, which works well for 100bp reads generated from a 180bp library, assuming a normal distribution of fragment lengths.</label>
+         |                                        <p class="col-sm-7">
+         |                                            Maximum overlap length expected in approximately 90% of read pairs. It is by default set to 65bp, which works well for 100bp reads generated from a 180bp library, assuming a normal distribution of fragment lengths.</p>
          |                                        <div class="col-sm-6 indent">
          |                                            <input name="M" id="M" class="form-control" value="${row(22)}" />
          |                                        </div>
          |                                    </div>
          |
         |                             <div class="form-group" >
-         |                                        <label class="col-sm-12">
-         |                                            Maximum allowed ratio between the number of mismatched base pairs and the overlap length. Default: 0.25.</label>
+         |                                        <p class="col-sm-7">
+         |                                            Maximum allowed ratio between the number of mismatched base pairs and the overlap length. Default: 0.25.</p>
          |                                        <div class="col-sm-6 indent">
          |                                            <input name="x" id="x" class="form-control" value="${row(23)}" />
          |                                        </div>

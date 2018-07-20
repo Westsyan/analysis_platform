@@ -48,12 +48,6 @@ class LoginController @Inject()(admindao: adminDao,projectdao:projectDao,sampled
         Redirect(routes.SampleController.home()).withSession(request.session + ("user" -> "March") +("id" -> "2"))
   }
 
-  def index = Action{ implicit request =>
-    val account = request.session.get("user").head
-    val id = Await.result(admindao.getIdByAccount(account),Duration.Inf)
-    val x = Await.result(projectdao.getAllProject(id),Duration.Inf)
-    Ok(views.html.background.index(x))
-  }
 
   def logout = Action {
     Redirect(routes.LoginController.admin()).withNewSession

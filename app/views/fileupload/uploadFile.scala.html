@@ -1,111 +1,112 @@
-@(projectName: Seq[String],proname:String)(implicit session: Session)
-    @fileupload.main(proname,projectName,proname) {
+@(projectName: Seq[String], proname: String, host: String)(implicit session: Session)
+@fileupload.main("数据导入", projectName, proname, host) {
 
-        <style>
-                label {
-                    text-indent: 2em;
-                }
+    <style>
+            label {
+                text-indent: 2em;
+            }
 
-        </style>
 
-        <div class="row-fluid">
+    </style>
 
-            <div class="row">
-                <div class="col-md-12 col-sm-12">
-                    <div class="portlet blue-soft box">
+    <div class="row-fluid">
 
-                        <div class="portlet-title">
-                            <div class="caption">
-                                数据处理
-                            </div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <div class="portlet blue-soft box">
+
+                    <div class="portlet-title">
+                        <div class="caption">
+                            数据导入
                         </div>
+                    </div>
 
-                        <div class="portlet-body">
+                    <div class="portlet-body">
 
-                            <form class="registration-form form-horizontal" id="UpdateForm" method="get"
-                            accept-charset="UTF-8">
+                        <form class="registration-form form-horizontal" id="UpdateForm" method="get"
+                        accept-charset="UTF-8">
+
+                            <div class="form-group" style="display: none;">
+                                <div class="col-sm-6 indent">
+                                    <input name="proname" id="proname" class="form-control" value="@proname" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-12">样品名:</label>
+                                <div class="col-sm-4 indent">
+                                    <input name="sample" id="sample" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-12">fastq 1 文件（左端）:</label>
+                                <div class="col-sm-4 indent">
+                                    <input id="input-1" type="file" class="file" name="file1" data-show-preview="false"
+                                    data-show-upload="false" accept=".fq,.fastq,.gz" >
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-12">fastq 2 文件（右端）:</label>
+                                <div class=" col-sm-4 indent">
+                                    <input id="input-2" type="file" class="file" name="file2" data-show-preview="false"
+                                    data-show-upload="false" accept=".fq,.fastq,.gz" >
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label class="col-sm-4">Trimmomatic PE(paired-end)(质控参数设置)
+                                    <a onclick="openLog()" title="帮助文档" class="helpIcon">
+                                        <i class="fa fa-question-circle-o"></i></a></label>
+                                <label class="col-sm-1">
+                                    <a id="down-1" style="margin-left: 2em">
+                                        <i class="fa fa-arrow-down"></i>
+                                    </a>
+                                    <a id="up-1" style="margin-left: 2em;
+                                        display: none">
+                                        <i class="fa fa-arrow-up"></i>
+                                    </a>
+                                </label>
+                            </div>
+
+                            <div id="set-1" style="display: none" class="indent">
 
                                 <div class="form-group">
-                                    <h4 class="col-sm-12">选择文件</h4>
-                                </div>
-
-                                <div class="form-group" style="display: none;">
-                                    <div class="col-sm-6 indent">
-                                        <input name="proname" id="proname" class="form-control" value="@proname" />
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="col-sm-12">样品名:</label>
-                                    <div class="col-sm-6 indent">
-                                        <input name="sample" id="sample" class="form-control" />
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="col-sm-12">fastq 1 文件:</label>
-                                    <div class="col-sm-6 indent">
-                                        <input id="input-1" type="file" class="file" name="file1" data-show-preview="false"
-                                        data-show-upload="false" accept=".fq,.fastq,.gz" >
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="col-sm-12">fastq 2 文件:</label>
-                                    <div class=" col-sm-6 indent">
-                                        <input id="input-2" type="file" class="file" name="file2" data-show-preview="false"
-                                        data-show-upload="false" accept=".fq,.fastq,.gz" >
-                                    </div>
-                                </div>
-
-
-                                <div class="form-group">
-                                    <h4 class="col-sm-12">参数设置:</h4>
-                                </div>
-
-                                <div class="form-group">
-                                    <h5 style="margin-left: 2em;">Trimmomatic PE(paired-end) - 1
-                                        <a id="down-1" style="margin-left: 2em">
-                                            <i class="fa fa-arrow-down"></i>
-                                        </a>
-                                        <a id="up-1" style="margin-left: 2em;
-                                            display: none">
-                                            <i class="fa fa-arrow-up"></i>
-                                        </a>
-                                    </h5>
-                                </div>
-
-                                <div id="set-1" style="display: none">
-
-                                    <div class="form-group">
-                                        <label class="col-sm-12">
-                                            Input FASTQ quality file scores encoding type:</label>
-                                        <div class="col-sm-6 indent">
+                                    <p class="col-sm-5" style="text-indent: 1em;">
+                                        Input FASTQ quality file scores encoding type:</p>
+                                    <div class="col-sm-12 indent-3">
+                                        <div class="col-sm-4">
                                             <select class="form-control" name="encondingType">
                                                 <option value="-phred64">Illumina 1.3-1.7 Phred+64</option>
                                                 <option value="-phred33" selected>Illumina 1.8+ Phred+33</option>
                                             </select>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div class="form-group">
-                                        <label class="col-sm-12">Perform initial ILLUMINACLIP step?:</label>
-                                        <div class="col-sm-6 indent">
+                                <div class="form-group">
+                                    <p class="col-sm-5" style="text-indent: 1em;">Perform initial ILLUMINACLIP step?:</p>
+                                    <div class="col-sm-12 indent-3">
+                                        <div class="col-sm-4">
                                             <select class="form-control" name="stepMethod" onchange="stepChange(this)">
                                                 <option value="yes">Yes</option>
                                                 <option value="no" selected>No</option>
                                             </select>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div id="stepValue" style="display: none;">
-                                        <div class="form-group" >
-                                            <label class="col-sm-12 indent-2">Adapter sequences to use:</label>
-                                            <div class="col-sm-6 indent-1">
+                                <div id="stepValue" style="display: none;">
+                                    <div class="form-group" >
+                                        <p class="col-sm-5 indent-1">Adapter sequences to use:</p>
+                                        <div class="col-sm-12 indent-1">
+                                            <div class="col-sm-4">
                                                 <select class="form-control" name="adapter">
                                                     <option value="TruSeq2-PE.fa">
                                                         TruSeq2 (paired-ended, for Illumina GAII)</option>
-                                                    <option value="TruSeq3-PE.fa">
+                                                    <option value="TruSeq3-PE.fa" selected>
                                                         TruSeq3 (paired-ended, for MiSeq and HiSeq)</option>
                                                     <option value="TruSeq3-PE-2.fa">
                                                         TruSeq3 (additional seqs) (paired-ended, for MiSeq and HiSeq)</option>
@@ -113,566 +114,739 @@
                                                 </select>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <div class="form-group" >
-                                            <label class="col-sm-12 indent-2">
-                                                Maximum mismatch count which will still allow a full match to be performed:</label>
-                                            <div class="col-sm-6 indent-1">
+                                    <div class="form-group" >
+                                        <p class="col-sm-5 indent-1">
+                                            Maximum mismatch count which will still allow a full match to be performed:</p>
+                                        <div class="col-sm-12 indent-1">
+                                            <div class="col-sm-4">
                                                 <input name="seed_mismatches" id="seed_mismatches" class="form-control" value="2" />
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group" >
-                                            <label class="col-sm-12 indent-2">
-                                                How accurate the match between the two 'adapter ligated' reads must be for PE palin
-                                                drome read alignment:</label>
-                                            <div class="col-sm-6 indent-1">
-                                                <input name="palindrome_clip_threshold" id="palindrome_clip_threshold" class="form-control" value="30" />
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group" >
-                                            <label class="col-sm-12 indent-2">
-                                                How accurate the match between any adapter etc. sequence must be against a read:</label>
-                                            <div class="col-sm-6 indent-1">
-                                                <input name="simple_clip_threshold" id="simple_clip_threshold" class="form-control" value="10" />
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="form-group">
-                                        <label class="col-sm-12">Perform Sliding window trimming (SLIDINGWINDOW)?:</label>
-                                        <div class="col-sm-6 indent">
+                                    <div class="form-group" >
+                                        <p class="col-sm-5 indent-1">
+                                            How accurate the match between the two 'adapter ligated' reads must be for PE palin
+                                            drome read alignment:</p>
+                                        <div class="col-sm-12 indent-1">
+                                            <div class="col-sm-4">
+                                                <input name="palindrome_clip_threshold" id="palindrome_clip_threshold" class="form-control" value="30" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" >
+                                        <p class="col-sm-5 indent-1">
+                                            How accurate the match between any adapter etc. sequence must be against a read:</p>
+                                        <div class="col-sm-12 indent-1">
+                                            <div class="col-sm-4">
+                                                <input name="simple_clip_threshold" id="simple_clip_threshold" class="form-control" value="10" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p class="col-sm-5" style="text-indent: 1em;">
+                                        Perform Sliding window trimming (SLIDINGWINDOW)?:</p>
+                                    <div class="col-sm-12 indent-3">
+                                        <div class="col-sm-4">
                                             <select class="form-control" name="trimMethod" onchange="trimChange(this)">
                                                 <option value="yes" selected>Yes</option>
                                                 <option value="no">No</option>
                                             </select>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div id="trimValue">
-                                        <div class="form-group" >
-                                            <label class="col-sm-12 indent-2">
-                                                Number of bases to average across:</label>
-                                            <div class="col-sm-6 indent-1">
+                                <div id="trimValue">
+                                    <div class="form-group" >
+                                        <p class="col-sm-5 indent-1">
+                                            Number of bases to average across:</p>
+                                        <div class="col-sm-12 indent-1">
+                                            <div class="col-sm-4">
                                                 <input name="window_size" id="window_size" class="form-control" value="50" />
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group" >
-                                            <label class="col-sm-12 indent-2">
-                                                Average quality required:</label>
-                                            <div class="col-sm-6 indent-1">
-                                                <input name="required_quality" id="required_quality" class="form-control" value="20" />
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="form-group">
-                                        <label class="col-sm-12">Drop reads below a specified length (MINLEN)?:</label>
-                                        <div class="col-sm-6 indent">
+                                    <div class="form-group" >
+                                        <p class="col-sm-5 indent-1">
+                                            Average quality required:</p>
+                                        <div class="col-sm-12 indent-1">
+                                            <div class="col-sm-4">
+                                                <input name="required_quality" id="required_quality" class="form-control" value="20" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p class="col-sm-5" style="text-indent: 1em;">
+                                        Drop reads below a specified length (MINLEN)?:</p>
+                                    <div class="col-sm-12 indent-3">
+                                        <div class="col-sm-4">
                                             <select class="form-control" name="minlenMethod" onchange="minlenChange(this)">
                                                 <option value="yes" selected>Yes</option>
                                                 <option value="no">No</option>
                                             </select>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div id="minlenValue">
-                                        <div class="form-group" >
-                                            <label class="col-sm-12 indent-2">
-                                                Minimum length of reads to be kept:</label>
-                                            <div class="col-sm-6 indent-1">
+                                <div id="minlenValue">
+                                    <div class="form-group" >
+                                        <p class="col-sm-5 indent-1">
+                                            Minimum length of reads to be kept:</p>
+                                        <div class="col-sm-12 indent-1">
+                                            <div class="col-sm-4">
                                                 <input name="minlen" id="minlen" class="form-control" value="50" />
                                             </div>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div class="form-group">
-                                        <label class="col-sm-12">
-                                            Cut bases off the start of a read, if below a threshold quality (LEADING)?:</label>
-                                        <div class="col-sm-6 indent">
+                                <div class="form-group">
+                                    <p class="col-sm-5" style="text-indent: 1em;">
+                                        Cut bases off the start of a read, if below a threshold quality (LEADING)?:</p>
+                                    <div class="col-sm-12 indent-3">
+                                        <div class="col-sm-4">
                                             <select class="form-control" name="leadingMethod" onchange="leadingChange(this)">
                                                 <option value="yes">Yes</option>
                                                 <option value="no" selected>No</option>
                                             </select>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div id="leadingValue" style="display: none">
-                                        <div class="form-group" >
-                                            <label class="col-sm-12 indent-2">
-                                                Minimum quality required to keep a base:</label>
-                                            <div class="col-sm-6 indent-1">
+                                <div id="leadingValue" style="display: none">
+                                    <div class="form-group" >
+                                        <p class="col-sm-5 indent-1">
+                                            Minimum quality required to keep a base:</p>
+                                        <div class="col-sm-12 indent-1">
+                                            <div class="col-sm-4">
                                                 <input name="leading" id="leading" class="form-control" value="3" />
                                             </div>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div class="form-group">
-                                        <label class="col-sm-12">
-                                            Cut bases off the end of a read, if below a threshold quality (TRAILING)?:</label>
-                                        <div class="col-sm-6 indent">
+                                <div class="form-group">
+                                    <p class="col-sm-5" style="text-indent: 1em;">
+                                        Cut bases off the end of a read, if below a threshold quality (TRAILING)?:</p>
+                                    <div class="col-sm-12 indent-3">
+                                        <div class="col-sm-4">
                                             <select class="form-control" name="trailingMethod" onchange="trailingChange(this)">
                                                 <option value="yes" selected>Yes</option>
                                                 <option value="no">No</option>
                                             </select>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div id="trailingValue">
-                                        <div class="form-group" >
-                                            <label class="col-sm-12 indent-2">
-                                                Minimum quality required to keep a base:</label>
-                                            <div class="col-sm-6 indent-1">
-                                                <input name="trailing" id="trailing" class="form-control" value="3" />
+                                <div id="trailingValue">
+                                    <div class="form-group" >
+                                        <p class="col-sm-5 indent-1">
+                                            Minimum quality required to keep a base:</p>
+                                        <div class="col-sm-12 indent-1">
+                                            <div class="col-sm-4">
+                                                <input name="trailing" id="trailing" class="form-control" value="20" />
                                             </div>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div class="form-group">
-                                        <label class="col-sm-12">Cut the read to a specified length (CROP):</label>
-                                        <div class="col-sm-6 indent">
+                                <div class="form-group">
+                                    <p class="col-sm-5" style="text-indent: 1em;">
+                                        Cut the read to a specified length (CROP):</p>
+                                    <div class="col-sm-12 indent-3">
+                                        <div class="col-sm-4">
                                             <select class="form-control" name="cropMethod" onchange="cropChange(this)">
                                                 <option value="yes">Yes</option>
                                                 <option value="no" selected>No</option>
                                             </select>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div id="cropValue" style="display: none">
-                                        <div class="form-group" >
-                                            <label class="col-sm-12 indent-2">
-                                                Number of bases to keep from the start of the read:</label>
-                                            <div class="col-sm-6 indent-1">
+                                <div id="cropValue" style="display: none">
+                                    <div class="form-group" >
+                                        <p class="col-sm-5 indent-1">
+                                            Number of bases to keep from the start of the read:</p>
+                                        <div class="col-sm-12 indent-1">
+                                            <div class="col-sm-4">
                                                 <input name="crop" id="crop" class="form-control" value="0" />
                                             </div>
                                         </div>
-
                                     </div>
 
-                                    <div class="form-group">
-                                        <label class="col-sm-12">
-                                            Cut the specified number of bases from the start of the read (HEADCROP)?:</label>
-                                        <div class="col-sm-6 indent">
+                                </div>
+
+                                <div class="form-group">
+                                    <p class="col-sm-5" style="text-indent: 1em;">
+                                        Cut the specified number of bases from the start of the read (HEADCROP)?:</p>
+                                    <div class="col-sm-12 indent-3">
+                                        <div class="col-sm-4">
                                             <select class="form-control" name="headcropMethod" onchange="headcropChange(this)">
                                                 <option value="yes">Yes</option>
                                                 <option value="no" selected>No</option>
                                             </select>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div id="headcropValue" style="display: none">
-                                        <div class="form-group" >
-                                            <label class="col-sm-12 indent-2">
-                                                Number of bases to remove from the start of the read:</label>
-                                            <div class="col-sm-6 indent-1">
+                                <div id="headcropValue" style="display: none">
+                                    <div class="form-group" >
+                                        <p class="col-sm-5 indent-1">
+                                            Number of bases to remove from the start of the read:</p>
+                                        <div class="col-sm-12 indent-1">
+                                            <div class="col-sm-4">
                                                 <input name="headcrop" id="headcrop" class="form-control" value="0" />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="form-group">
-                                    <h5 style="margin-left: 2em;">Using FLASH to merge paired-end reads
-                                        <a id="down-2" style="margin-left: 2em">
-                                            <i class="fa fa-arrow-down"></i>
-                                        </a>
-                                        <a id="up-2" style="margin-left: 2em;
-                                            display: none">
-                                            <i class="fa fa-arrow-up"></i>
-                                        </a>
-                                    </h5>
-                                </div>
+                            <div class="form-group">
+                                <label class="col-sm-4">Using FLASH to merge paired-end reads(拼接参数设置)
+                                    <a onclick="openHelp()"  title="帮助文档" class="helpIcon">
+                                        <i class="fa fa-question-circle-o"></i></a>
+                                </label>
+                                <label class="col-sm-1">
+                                    <a id="down-2" style="margin-left: 2em">
+                                        <i class="fa fa-arrow-down"></i>
+                                    </a>
+                                    <a id="up-2" style="margin-left: 2em;
+                                        display: none">
+                                        <i class="fa fa-arrow-up"></i>
+                                    </a>
+                                </label>
+                            </div>
 
 
-                                <div id="set-2" style="display: none">
-                                    <div class="form-group" >
-                                        <label class="col-sm-12">
-                                            The minimum required overlap length between two reads to provide a confident overlap. Default:10bp.</label>
-                                        <div class="col-sm-6 indent">
+                            <div id="set-2" style="display: none" class="indent">
+                                <div class="form-group" >
+                                    <p class="col-sm-5" style="text-indent: 1em;">
+                                        The minimum required overlap length between two reads to provide a confident overlap. Default:10bp.</p>
+                                    <div class="col-sm-12 indent-3">
+                                        <div class="col-sm-4">
                                             <input name="m" id="m" class="form-control" value="10" />
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div class="form-group" >
-                                        <label class="col-sm-12">
-                                            Maximum overlap length expected in approximately 90% of read pairs. It is by default set to 65bp, which works well for 100bp reads generated from a 180bp library, assuming a normal distribution of fragment lengths.</label>
-                                        <div class="col-sm-6 indent">
+                                <div class="form-group" >
+                                    <p class="col-sm-5" style="text-indent: 1em;">
+                                        Maximum overlap length expected in approximately 90% of read pairs. It is by default set to 65bp, which works well for 100bp reads generated from a 180bp library, assuming a normal distribution of fragment lengths.</p>
+                                    <div class="col-sm-12 indent-3">
+                                        <div class="col-sm-4">
                                             <input name="M" id="M" class="form-control" value="65" />
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div class="form-group" >
-                                        <label class="col-sm-12">
-                                            Maximum allowed ratio between the number of mismatched base pairs and the overlap length. Default: 0.25.</label>
-                                        <div class="col-sm-6 indent">
+                                <div class="form-group" >
+                                    <p class="col-sm-5" style="text-indent: 1em;">
+                                        Maximum allowed ratio between the number of mismatched base pairs and the overlap length. Default: 0.25.</p>
+                                    <div class="col-sm-12 indent-3">
+                                        <div class="col-sm-4">
                                             <input name="x" id="x" class="form-control" value="0.25" />
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
 
-                                <div class="form-group">
-                                    <div class = "actions col-sm-offset-1 col-sm-4">
-                                        <button type="button" class="btn btn-primary" style="width: 90%;" id="search" onclick="Running()">
-                                            应用</button>
-                                    </div>
+                            <div class="form-group">
+                                <div class = "actions indent col-sm-4">
+                                    <button type="button" class="btn btn-primary" style="width: 100%;" id="search" onclick="Running()">
+                                        导入</button>
                                 </div>
-                            </form>
-
-
-                        </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
 
-        <script>
+    <div id="logShow" class="modal fade modal-margin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width: 1000px;">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                    <h4 class="modal-title">
+                        <span id="lblAddTitle" style="font-weight: bold">帮助文档：</span>
+                        <button type="button" class="btn-remove" data-dismiss="modal" ><i class="fa fa-remove"></i></button>
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row-fluid" id="logInfo">
+                        <p class="helpClass">
+                            分析模块封装了Trimmomatic工具，Trimmomatic是一个针对Illumina高通量测序的reads trim工具，支持paired-end（双末端）和single-end（单末端）数据。</p>
+
+                        <p class="helpClass">Trimmomatic包括如下功能：</p>
+
+                        <p class="helpClass"><strong>ILLUMINACLIP:</strong>
+                            Cut adapter and other illumina-specific sequences from the read</p>
+
+                        <p class="helpClass"><strong>SLIDINGWINDOW:</strong>
+                            Perform a sliding window trimming, cutting once the average quality within the window falls below a threshold</p>
+
+                        <p class="helpClass"><STRONG>MINLEN:</STRONG> Drop the read if it is below a specified length</p>
+
+                        <p class="helpClass"><strong>LEADING:</strong>
+                            Cut bases off the start of a read, if below a threshold quality</p>
+
+                        <p class="helpClass"><strong>TRAILING:</strong>
+                            Cut bases off the end of a read, if below a threshold quality</p>
+
+                        <p class="helpClass"><strong>CROP:</strong> Cut the read to a specified length</p>
+
+                        <p class="helpClass"><strong>HEADCROP:</strong>
+                            Cut the specified number of bases from the start of the read</p>
+                        <br>
+                        <p class="helpClass">输入</p>
+                        <br>
+                        <p class="helpClass">对于single-end（单末端）数据，输入单个FASTQ文件。</p>
+
+                        <p class="helpClass">对于paired-end（双末端）数据，输入两个FASTQ文件（R1和R2）。</p>
+                        <br>
+                        <p class="helpClass">设置质量值参数， Illumina 1.3-1.7 Phred+64 对应Illumina早期平台，Illumina 1.8+ Phred+33 对应Illumina最新平台，默认参数为：Illumina 1.8+ Phred+33。</p>
+                        <br>
+                        <p class="helpClass">附录：</p>
+                        <br>
+                        <p class="helpClass">对于扩增子测序，MiSeq PE 250，建议使用如下参数设置：</p>
+                        <p class="helpClass">Perform Sliding window trimming (SLIDINGWINDOW)：Yes</p>
+                        <p class="helpClass">Number of bases to average across：50</p>
+                        <p class="helpClass">Average quality required：20</p>
+                        <p class="helpClass">Drop reads below a specified length (MINLEN)：Yes</p>
+                        <p class="helpClass">Minimum length of reads to be kept：50</p>
+                        <p class="helpClass">Cut bases off the end of a read, if below a threshold quality (TRAILING)：Yes</p>
+                        <p class="helpClass">Minimum quality required to keep a base：20</p>
+                        <p class="helpClass">即，过滤read尾部质量值20以下的碱基，设置50bp的窗口，如果窗口内的平均质量值低于20，从窗口开始截去后端碱基，过滤质控后50bp以下的read。</p>
+                        <br>
+                        <p class="helpClass">分析模块引用了Trimmomatic v0.32 软件(
+                            <a target="_blank" href="http://www.usadellab.org/cms/index.php?page=trimmomatic">http://www.usadellab.org/cms/index.php?page=trimmomatic</a> )。</p>
+                        <br>
+                        <p class="helpClass">相关文献如下所示：</p>
+                        <p class="helpClass">Bolger, A.M., Lohse, M., &amp; Usadel, B. (2014). Trimmomatic: A flexible trimmer for Illumina Sequence Data. Bioinformatics, btu170.</p>
+                        <p class="helpClass"></p>
+                        <p class="helpClass"></p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="helpShow" class="modal fade modal-margin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width: 1000px;">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                    <h4 class="modal-title">
+                        <span id="lblAddTitle" style="font-weight: bold">帮助文档：</span>
+                        <button type="button" class="btn-remove" data-dismiss="modal" ><i class="fa fa-remove"></i></button>
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row-fluid" id="logInfo">
+                        <p class="helpClass">分析模块封装了FLASH（Fast Length Adjustment of SHort reads），FLASH根据PE reads之间的overlap关系，将成对reads拼接（merge）成一条序列。</p>
+                        <p class="helpClass">注：只有初始DNA片段长度小于2倍read读长，即 PE reads测通，才能将双末端测序的paired-end reads拼接起来。</p>
+                        <br>
+                        <p class="helpClass"><strong>注意：</strong></p>
+                        <p class="helpClass">对于扩增子测序文库。</p>
+                        <p class="helpClass">假定，16s扩增区域为，V4 + v5，扩增产物长度均值为m=400bp，标准差为sd=20bp，MiSeq测序读长为r=250bp，那么建议设置Maximum overlap为：2*r - m + 2.5*sd = 150bp</p>
+                        <br>
+                        <p class="helpClass"><strong>特别注意：</strong></p>
+                        <p class="helpClass">大多数情况下，测序read读长小于扩增产物长度，如下所示：</p>
+                        <img src="/assets/images/help1.jpg">
+                        <p class="helpClass">那么，通过两端reads尾部的overlap关系就可以将两端的reads拼接起来。</p>
+                        <br>
+                        <p class="helpClass">如果测序read读长大于扩增产物长度，如下所示：</p>
+                        <img src="/assets/images/help2.jpg">
+                        <p class="helpClass">可以看到，两端reads的尾部并不存在overlap关系，无法将两端reads拼接起来。</p>
+                        <p class="helpClass">面对这种情况，需要在原始数据剪切和过滤时，同时将两端reads的尾部截掉，使得reads的读长小于扩增产物的长度。</p>
+                        <p class="helpClass">在"Trimmomatic PE(paired-end)"参数界面中，设置CROP过程，将reads截短到需要的长度。</p>
+                        <img src="/assets/images/help3.png">
+                        <p class="helpClass">两端reads截短后，如下所示，通过尾部的overlap关系，即可拼接起来。</p>
+                        <img src="/assets/images/help4.jpg">
+                        <br>
+                        <p class="helpClass">FLASH简介如下所示：</p>
+                        <p class="helpClass">FLASH (Fast Length Adjustment of SHort reads) is an accurate and fast tool to merge paired-end reads that were generated from DNA fragments whose lengths are shorter than twice the length of reads. Merged read pairs result in unpaired longer reads, which are generally more desired in genome assembly and genome analysis processes. Briefly, the FLASH algorithm considers all possible overlaps at or above a minimum length between the reads in a pair and chooses the overlap that results in the lowest mismatch density (proportion of mismatched bases in the overlapped region).  Ties between multiple overlaps are broken by considering quality scores at mismatch sites.  When building the merged sequence, FLASH computes a consensus sequence in the overlapped region. More details can be found in the original publication.</p>
+                        <p class="helpClass">Limitations of FLASH include:</p>
+                        <p class="helpClass">- FLASH cannot merge paired-end reads that do not overlap.</p>
+                        <p class="helpClass">- FLASH is not designed for data that has a significant amount of indel errors (such as Sanger sequencing data). It is best suited for Illumina data.</p>
+                        <br>
+                        <p class="helpClass">分析模块引用了FLASH v1.2.11软件（
+                            <a target="_blank" href="https://ccb.jhu.edu/software/FLASH/">https://ccb.jhu.edu/software/FLASH/</a>）。</p>
+                        <br>
+                        <p class="helpClass">相关文献如下所示：</p>
+                        <p class="helpClass">FLASH: Fast length adjustment of short reads to improve genome assemblies. T. Magoc and S. Salzberg. Bioinformatics 27:21 (2011), 2957-63.</p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
 
 
-             $(function () {
-                 formValidation();
-             })
+            $(function () {
+                formValidation();
+            })
 
-                function formValidation() {
-                    $('#UpdateForm').formValidation({
-                        framework: 'bootstrap',
-                        icon: {
-                            valid: 'glyphicon glyphicon-ok',
-                            invalid: 'glyphicon glyphicon-remove',
-                            validating: 'glyphicon glyphicon-refresh'
+
+            function openLog() {
+                $("#logShow").modal("show")
+            }
+
+            function openHelp() {
+                $("#helpShow").modal("show")
+            }
+
+            function formValidation() {
+                $('#UpdateForm').formValidation({
+                    framework: 'bootstrap',
+                    icon: {
+                        valid: 'glyphicon glyphicon-ok',
+                        invalid: 'glyphicon glyphicon-remove',
+                        validating: 'glyphicon glyphicon-refresh'
+                    },
+                    fields: {
+                        sample: {
+                            validators: {
+                                notEmpty: {
+                                    message: '不能为空!'
+                                },
+                                regexp: {
+                                    regexp: '^[A-Za-z0-9"_"]{1,12}$',
+                                    message: '12个以内字符，可使用字母、数字、下划线！'
+                                },
+                                remote: {
+                                    type: 'POST',
+                                    url: '/project/checkSample?proname=@proname',
+                                    message: "样品名重复，请重新输入",
+                                    delay: 1000
+                                },
+                            }
                         },
-                        fields: {
-                            sample: {
-                                validators: {
-                                    notEmpty: {
-                                        message: '不能为空!'
-                                    },
-                                    regexp: {
-                                        regexp: '^[A-Za-z0-9"_"]{1,12}$',
-                                        message: '12个以内字符，可使用字母、数字、下划线！'
-                                    },
-                                    remote: {
-                                        type: 'POST',
-                                        url: '/project/checkSample?proname=@proname',
-                                        message:"样品名重复，请重新输入",
-                                        delay: 1000
-                                    },
+                        file1: {
+                            validators: {
+                                notEmpty: {
+                                    message: '请选择一个数据文件！'
+                                },
+                                file: {
+                                    extension: 'fq,gz,fastq',
+                                    message: '文件格式：fq,fq.gz,fastq,fastq.gz！'
                                 }
-                            },
-                            file1:{
-                                validators: {
-                                    notEmpty: {
-                                        message: '请选择一个数据文件！'
-                                    },
-                                    file: {
-                                        extension: 'fq,gz,fastq',
-                                        message: '文件格式：fq,fq.gz,fastq,fastq.gz！'
-                                    }
+                            }
+                        },
+                        file2: {
+                            validators: {
+                                notEmpty: {
+                                    message: '请选择一个数据文件！'
+                                },
+                                file: {
+                                    extension: 'fq,gz,fastq',
+                                    message: '文件格式：fq,fq.gz,fastq,fastq.gz！'
                                 }
-                            },
-                            file2:{
-                                validators: {
-                                    notEmpty: {
-                                        message: '请选择一个数据文件！'
-                                    },
-                                    file: {
-                                        extension: 'fq,gz,fastq',
-                                        message: '文件格式：fq,fq.gz,fastq,fastq.gz！'
-                                    }
+                            }
+                        },
+                        seed_mismatches: {
+                            validators: {
+                                notEmpty: {
+                                    message: '不能为空！'
+                                },
+                                integer: {
+                                    message: '必须为整数！'
                                 }
-                            },
-                            seed_mismatches:{
-                                validators: {
-                                    notEmpty: {
-                                        message: '不能为空！'
-                                    },
-                                    integer: {
-                                        message: '必须为整数！'
-                                    }
+                            }
+                        },
+                        palindrome_clip_threshold: {
+                            validators: {
+                                notEmpty: {
+                                    message: '不能为空！'
+                                },
+                                integer: {
+                                    message: '必须为整数！'
                                 }
-                            },
-                            palindrome_clip_threshold:{
-                                validators: {
-                                    notEmpty: {
-                                        message: '不能为空！'
-                                    },
-                                    integer: {
-                                        message: '必须为整数！'
-                                    }
+                            }
+                        },
+                        simple_clip_threshold: {
+                            validators: {
+                                notEmpty: {
+                                    message: '不能为空！'
+                                },
+                                integer: {
+                                    message: '必须为整数！'
                                 }
-                            },
-                            simple_clip_threshold:{
-                                validators: {
-                                    notEmpty: {
-                                        message: '不能为空！'
-                                    },
-                                    integer: {
-                                        message: '必须为整数！'
-                                    }
+                            }
+                        },
+                        window_size: {
+                            validators: {
+                                notEmpty: {
+                                    message: '不能为空！'
+                                },
+                                integer: {
+                                    message: '必须为整数！'
                                 }
-                            },
-                            window_size:{
-                                validators: {
-                                    notEmpty: {
-                                        message: '不能为空！'
-                                    },
-                                    integer: {
-                                        message: '必须为整数！'
-                                    }
+                            }
+                        },
+                        required_quality: {
+                            validators: {
+                                notEmpty: {
+                                    message: '不能为空！'
+                                },
+                                integer: {
+                                    message: '必须为整数！'
                                 }
-                            },
-                            required_quality:{
-                                validators: {
-                                    notEmpty: {
-                                        message: '不能为空！'
-                                    },
-                                    integer: {
-                                        message: '必须为整数！'
-                                    }
+                            }
+                        },
+                        minlen: {
+                            validators: {
+                                notEmpty: {
+                                    message: '不能为空！'
+                                },
+                                integer: {
+                                    message: '必须为整数！'
                                 }
-                            },
-                            minlen:{
-                                validators: {
-                                    notEmpty: {
-                                        message: '不能为空！'
-                                    },
-                                    integer: {
-                                        message: '必须为整数！'
-                                    }
+                            }
+                        },
+                        leading: {
+                            validators: {
+                                notEmpty: {
+                                    message: '不能为空！'
+                                },
+                                integer: {
+                                    message: '必须为整数！'
                                 }
-                            },
-                            leading:{
-                                validators: {
-                                    notEmpty: {
-                                        message: '不能为空！'
-                                    },
-                                    integer: {
-                                        message: '必须为整数！'
-                                    }
+                            }
+                        },
+                        trailing: {
+                            validators: {
+                                notEmpty: {
+                                    message: '不能为空！'
+                                },
+                                integer: {
+                                    message: '必须为整数！'
                                 }
-                            },
-                            trailing:{
-                                validators: {
-                                    notEmpty: {
-                                        message: '不能为空！'
-                                    },
-                                    integer: {
-                                        message: '必须为整数！'
-                                    }
+                            }
+                        },
+                        crop: {
+                            validators: {
+                                notEmpty: {
+                                    message: '不能为空！'
+                                },
+                                integer: {
+                                    message: '必须为整数！'
                                 }
-                            },
-                            crop:{
-                                validators: {
-                                    notEmpty: {
-                                        message: '不能为空！'
-                                    },
-                                    integer: {
-                                        message: '必须为整数！'
-                                    }
+                            }
+                        },
+                        headcrop: {
+                            validators: {
+                                notEmpty: {
+                                    message: '不能为空！'
+                                },
+                                integer: {
+                                    message: '必须为整数！'
                                 }
-                            },
-                            headcrop:{
-                                validators: {
-                                    notEmpty: {
-                                        message: '不能为空！'
-                                    },
-                                    integer: {
-                                        message: '必须为整数！'
-                                    }
+                            }
+                        },
+                        m: {
+                            validators: {
+                                notEmpty: {
+                                    message: '不能为空！'
+                                },
+                                integer: {
+                                    message: '必须为整数！'
                                 }
-                            },
-                            m:{
-                                validators: {
-                                    notEmpty: {
-                                        message: '不能为空！'
-                                    },
-                                    integer: {
-                                        message: '必须为整数！'
-                                    }
+                            }
+                        },
+                        M: {
+                            validators: {
+                                notEmpty: {
+                                    message: '不能为空！'
+                                },
+                                integer: {
+                                    message: '必须为整数！'
                                 }
-                            },
-                            M:{
-                                validators: {
-                                    notEmpty: {
-                                        message: '不能为空！'
-                                    },
-                                    integer: {
-                                        message: '必须为整数！'
-                                    }
-                                }
-                            },
-                            x:{
-                                validators: {
-                                    notEmpty: {
-                                        message: '不能为空！'
-                                    },
-                                    numeric: {
-                                        message: '必须为数字！'
-                                    }
+                            }
+                        },
+                        x: {
+                            validators: {
+                                notEmpty: {
+                                    message: '不能为空！'
+                                },
+                                numeric: {
+                                    message: '必须为数字！'
                                 }
                             }
                         }
-                    })
-                }
-
-
-                $("#down-1").click(function () {
-                    $("#set-1").show();
-                    $("#down-1").hide();
-                    $("#up-1").show()
-                });
-
-                $("#up-1").click(function () {
-                    $("#set-1").hide();
-                    $("#down-1").show();
-                    $("#up-1").hide()
-                });
-
-                $("#down-2").click(function () {
-                    $("#set-2").show();
-                    $("#down-2").hide();
-                    $("#up-2").show()
-                });
-
-                $("#up-2").click(function () {
-                    $("#set-2").hide();
-                    $("#down-2").show();
-                    $("#up-2").hide()
-                });
-
-                function stepChange(element) {
-                    var value = $(element).find(">option:selected").val()
-                    if (value == "yes") {
-                        $("#stepValue").show()
-                    } else {
-                        $("#stepValue").hide()
                     }
+                })
+            }
+
+
+            $("#down-1").click(function () {
+                $("#set-1").show();
+                $("#down-1").hide();
+                $("#up-1").show()
+            });
+
+            $("#up-1").click(function () {
+                $("#set-1").hide();
+                $("#down-1").show();
+                $("#up-1").hide()
+            });
+
+            $("#down-2").click(function () {
+                $("#set-2").show();
+                $("#down-2").hide();
+                $("#up-2").show()
+            });
+
+            $("#up-2").click(function () {
+                $("#set-2").hide();
+                $("#down-2").show();
+                $("#up-2").hide()
+            });
+
+            function stepChange(element) {
+                var value = $(element).find(">option:selected").val()
+                if (value == "yes") {
+                    $("#stepValue").show()
+                } else {
+                    $("#stepValue").hide()
                 }
+            }
 
-                function trimChange(element) {
-                    var value = $(element).find(">option:selected").val()
-                    if (value == "yes") {
-                        $("#trimValue").show()
-                    } else {
-                        $("#trimValue").hide()
-                    }
+            function trimChange(element) {
+                var value = $(element).find(">option:selected").val()
+                if (value == "yes") {
+                    $("#trimValue").show()
+                } else {
+                    $("#trimValue").hide()
                 }
+            }
 
-                function minlenChange(element) {
-                    var value = $(element).find(">option:selected").val()
-                    if (value == "yes") {
-                        $("#minlenValue").show()
-                    } else {
-                        $("#minlenValue").hide()
-                    }
+            function minlenChange(element) {
+                var value = $(element).find(">option:selected").val()
+                if (value == "yes") {
+                    $("#minlenValue").show()
+                } else {
+                    $("#minlenValue").hide()
                 }
+            }
 
-                function leadingChange(element) {
-                    var value = $(element).find(">option:selected").val()
-                    if (value == "yes") {
-                        $("#leadingValue").show()
-                    } else {
-                        $("#leadingValue").hide()
-                    }
+            function leadingChange(element) {
+                var value = $(element).find(">option:selected").val()
+                if (value == "yes") {
+                    $("#leadingValue").show()
+                } else {
+                    $("#leadingValue").hide()
                 }
+            }
 
-                function trailingChange(element) {
-                    var value = $(element).find(">option:selected").val()
-                    if (value == "yes") {
-                        $("#trailingValue").show()
-                    } else {
-                        $("#trailingValue").hide()
-                    }
+            function trailingChange(element) {
+                var value = $(element).find(">option:selected").val()
+                if (value == "yes") {
+                    $("#trailingValue").show()
+                } else {
+                    $("#trailingValue").hide()
                 }
+            }
 
-                function cropChange(element) {
-                    var value = $(element).find(">option:selected").val()
-                    if (value == "yes") {
-                        $("#cropValue").show()
-                    } else {
-                        $("#cropValue").hide()
-                    }
+            function cropChange(element) {
+                var value = $(element).find(">option:selected").val()
+                if (value == "yes") {
+                    $("#cropValue").show()
+                } else {
+                    $("#cropValue").hide()
                 }
+            }
 
-                function headcropChange(element) {
-                    var value = $(element).find(">option:selected").val()
-                    if (value == "yes") {
-                        $("#headcropValue").show()
-                    } else {
-                        $("#headcropValue").hide()
-                    }
+            function headcropChange(element) {
+                var value = $(element).find(">option:selected").val()
+                if (value == "yes") {
+                    $("#headcropValue").show()
+                } else {
+                    $("#headcropValue").hide()
                 }
+            }
 
 
+            var time = "";
 
-                var time = "";
+            function Running() {
+                var date = new Date();
+                time = date.getTime();
+                var form = $("#UpdateForm")
+                var fv = form.data("formValidation")
+                fv.validate()
+                if (fv.isValid()) {
+                    var element = "<div id='content'><span id='info'>文件上传中： </span><span id='progress'></span></div>"
+                    var index = layer.msg(element, {
+                        icon: 16
+                        , shade: 0.01,
+                        time: 20000000
+                    });
+                    var form = new FormData($("#UpdateForm")[0]);
+                    $.ajax({
+                        url: "@routes.SampleController.uploadFile()",
+                        type: "post",
+                        dataType: "json",
+                        processData: false,
+                        contentType: false,
+                        data: form,
+                        xhr: function () { //获取ajaxSettings中的xhr对象，为它的upload属性绑定progress事件的处理函数
 
-                function Running() {
-                    var date = new Date();
-                    time = date.getTime();
-                    var form = $("#UpdateForm")
-                    var fv = form.data("formValidation")
-                    fv.validate()
-                    if (fv.isValid()) {
-                        var element = "<div id='content'><span id='info'>文件上传中： </span><span id='progress'></span></div>"
-                        var index = layer.msg(element, {
-                            icon: 16
-                            ,shade: 0.01,
-                            time: 20000000
-                        });
-                        var form = new FormData($("#UpdateForm")[0]);
-                        $.ajax({
-                            url: "@routes.SampleController.uploadFile()",
-                            type: "post",
-                            dataType: "json",
-                            processData: false,
-                            contentType: false,
-                            data: form,
-                            xhr: function(){ //获取ajaxSettings中的xhr对象，为它的upload属性绑定progress事件的处理函数
-
-                                myXhr = $.ajaxSettings.xhr();
-                                if(myXhr.upload){ //检查upload属性是否存在
-                                    //绑定progress事件的回调函数
-                                    myXhr.upload.addEventListener('progress',progressHandlingFunction, false);
-                                }
-                                return myXhr; //xhr对象返回给jQuery使用
-                            },
-                            success: function () {
-                                        window.location.href="/project/toDate?proname=@proname";
-
+                            myXhr = $.ajaxSettings.xhr();
+                            if (myXhr.upload) { //检查upload属性是否存在
+                                //绑定progress事件的回调函数
+                                myXhr.upload.addEventListener('progress', progressHandlingFunction, false);
                             }
-                        });
-                    }
+                            return myXhr; //xhr对象返回给jQuery使用
+                        },
+                        success: function () {
+                            window.location.href = "/project/toDate?proname=@proname";
+
+                        }
+                    });
                 }
+            }
 
 
-             function progressHandlingFunction(e) {
-                 if (e.lengthComputable) {
-                     $('#progress').attr({value : e.loaded, max : e.total}); //更新数据到进度条
-                     var mydate = new Date();
-                     var time1 = mydate.getTime();
+            function progressHandlingFunction(e) {
+                if (e.lengthComputable) {
+                    $('#progress').attr({value: e.loaded, max: e.total}); //更新数据到进度条
+                    var mydate = new Date();
+                    var time1 = mydate.getTime();
 
-                     var speed = (e.loaded/1024)/((time1-time)/1000)
+                    var speed = (e.loaded / 1024) / ((time1 - time) / 1000);
 
-                     var percent = e.loaded/e.total*100;
-                     $('#progress').html(percent.toFixed(2) + "%   " + parseInt(speed) + "KB/S" );
-                     $('#progress').css('width', percent.toFixed(2) + "%");
-                 }
-             }
+                    var percent = e.loaded / e.total * 100;
+                    $('#progress').html(percent.toFixed(2) + "%   " + parseInt(speed) + "KB/S");
+                    $('#progress').css('width', percent.toFixed(2) + "%");
+                }
+            }
 
 
-             $("#input-1").fileinput({
-                    showPreview: false,
-                    browseLabel: "选择文件"
-                });
+            $("#input-1").fileinput({
+                showPreview: false,
+                browseLabel: "选择文件"
+            });
 
-                $("#input-2").fileinput({
-                    showPreview: false,
-                    browseLabel: "选择文件"
-                });
+            $("#input-2").fileinput({
+                showPreview: false,
+                browseLabel: "选择文件"
+            });
 
-        </script>
-    }
+    </script>
+}

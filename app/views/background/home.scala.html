@@ -1,6 +1,6 @@
 @import models.Tables.ProjectRow
-@(project: Seq[ProjectRow], projectname: Seq[String])(implicit session: Session)
-@background.main("")(projectname) {
+@(project: Seq[ProjectRow], projectname: Seq[String],host:String)(implicit session: Session)
+@background.main("管理项目")(projectname)(host) {
 
     <style>
 
@@ -9,7 +9,7 @@
             word-wrap:break-word;
             position: relative;
             line-height: 20px;
-            max-height: 40px;
+            max-height: 80px;
             overflow: hidden;
             width:150px;
         }
@@ -422,7 +422,7 @@
                         success: function (data) {
                             if (data.valid == "true") {
                                 $("#addModal").modal("hide")
-                                cpm("home","添加成功");
+                                cpm("home","新建成功");
                             }
                         }
                     });

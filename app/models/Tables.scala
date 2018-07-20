@@ -61,7 +61,7 @@ trait Tables {
    *  @param id Database column id SqlType(INT), AutoInc
    *  @param accountid Database column accountid SqlType(INT)
    *  @param projectname Database column projectname SqlType(VARCHAR), Length(255,true)
-   *  @param description Database column description SqlType(VARCHAR), Length(255,true)
+   *  @param description Database column description SqlType(VARCHAR), Length(2550,true)
    *  @param createdata Database column createdata SqlType(DATETIME)
    *  @param samcount Database column samcount SqlType(INT) */
   final case class ProjectRow(id: Int, accountid: Int, projectname: String, description: String, createdata: DateTime, samcount: Int)

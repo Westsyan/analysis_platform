@@ -26,7 +26,7 @@ class OtuController @Inject()(admindao: adminDao, projectdao: projectDao, sample
   def toOtuPage(proname: String): Action[AnyContent] = Action { implicit request =>
     val userId = request.session.get("id").head.toInt
     val allName = Await.result(projectdao.getAllProject(userId), Duration.Inf)
-    Ok(views.html.otuAnalysis.otuPage(allName, proname))
+    Ok(views.html.otuAnalysis.otuPage(allName, proname,request.domain))
   }
 
   case class otuData(proname: String, otuname: String, sample: Seq[String], minseqlength: Option[Int],
@@ -135,7 +135,7 @@ class OtuController @Inject()(admindao: adminDao, projectdao: projectDao, sample
   def otuPage(proname: String) = Action { implicit request =>
     val ses = getUserIdAndProId(request.session, proname)
     val allName = Await.result(projectdao.getAllProject(ses._1), Duration.Inf)
-    Ok(views.html.otuAnalysis.task(allName, proname))
+    Ok(views.html.otuAnalysis.task(allName, proname,request.domain))
   }
 
   def getUserIdAndProId(session: Session, proname: String): (Int, Int) = {
@@ -194,19 +194,18 @@ class OtuController @Inject()(admindao: adminDao, projectdao: projectDao, sample
       }
       val results = if (x.state == 1) {
         s"""
-           |<a class="fastq" href="/project/downloadOtu?id=${x.id}&code=1" title="OTU代表序列文件"><b>otu_rep_seqs.fasta</b></a>,&nbsp;
-           |<a class="fastq" href="/project/downloadOtu?id=${x.id}&code=2" title="OTU Table表格文件"><b>otu_table.txt</b></a>,&nbsp;
-           |<a class="fastq" href="/project/downloadOtu?id=${x.id}&code=3" title="Qiime格式的分类学注释结果文件"><b>tax_assign.txt</b></a>
-           |<button class="update" onclick="openTable(this)"  id="${x.id}" title="查看表格"><i class="fa fa-eye"></i></button>
+           |<a class="fastq" href="/project/downloadOtu?id=${x.id}&code=1" title="OTU代表序列"><b>otu_rep_seqs.fasta</b></a>,&nbsp;
+           |<a class="fastq" href="/project/downloadOtu?id=${x.id}&code=2" title="OTU丰度信息表"><b>otu_table.txt</b></a>,&nbsp;
+           |<a class="fastq" href="/project/downloadOtu?id=${x.id}&code=3" title="分类学注释结果"><b>tax_assign.txt</b></a>
+           |<button class="update" onclick="openTable(this)"  id="${x.id}" title="OTU Taxon Table"><i class="fa fa-eye"></i></button>
            """.stripMargin
       } else {
         ""
       }
       val operation = if (x.state == 1) {
         s"""
-           |  <button class="update" onclick="updateOtu(this)" value="${x.otuname}" id="${x.id}" title="修改样品名"><i class="fa fa-pencil"></i></button>
-           |  <button class="update" onclick="restart(this)" value="${x.id}" title="重新运行"><i class="fa fa-repeat"></i></button>
-           |  <button class="update" onclick="openRdp(this)" value="${x.id}" title="重新运行RDP"><i class="fa fa-rotate-left"></i></button>
+           |  <button class="update" onclick="restart(this)" value="${x.id}" title="重新运行OTU聚类和分类学注释"><i class="fa fa-repeat"></i></button>
+           |  <button class="update" onclick="openRdp(this)" value="${x.id}" title="重新运行分类学注释"><i class="fa fa-rotate-left"></i></button>
            |  <button class="update" onclick="openLog(this)" value="${x.id}" title="查看日志"><i class="fa fa-file-text"></i></button>
            |  <button class="delete" onclick="openDelete(this)" value="${x.otuname}" id="${x.id}" title="删除任务"><i class="fa fa-trash"></i></button>
            """.stripMargin

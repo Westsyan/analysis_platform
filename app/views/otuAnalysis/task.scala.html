@@ -1,5 +1,5 @@
-@(projectName: Seq[String], proname: String)(implicit session: Session)
-@fileupload.main(proname, projectName, proname) {
+@(projectName: Seq[String], proname: String,host:String)(implicit session: Session)
+@fileupload.main("分析结果", projectName, proname,host) {
 
     <style>
             .update {
@@ -58,7 +58,7 @@
 
                 <div class="portlet-title">
                     <div class="caption">
-                        任务管理
+                        分析结果
                     </div>
                 </div>
 
@@ -73,10 +73,10 @@
                             <thead>
                                 <tr>
                                     <th data-field="otuname" data-sortable="true" id="otuname">任务名</th>
-                                    <th data-field="createdate" data-sortable="true" id="createdata">添加时间</th>
+                                    <th data-field="createdate" data-sortable="true" id="createdata">创建时间</th>
                                     <th data-field="state" data-sortable="true" id="state">运行状态</th>
-                                    <th data-field="otuseqs" data-sortable="true" id="otuseqs">Otu数目</th>
-                                    <th data-field="results" data-sortable="false" id="results">下载文件</th>
+                                    <th data-field="otuseqs" data-sortable="true" id="otuseqs">OTU数目</th>
+                                    <th data-field="results" data-sortable="false" id="results">结果一览</th>
                                     <th data-field="operation" data-sortable="false" id="operation">操作</th>
                                 </tr>
                             </thead>
@@ -87,67 +87,13 @@
         </div>
     </div>
 
-@*    <div id="update" class="modal fade modal-margin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog" style="width: 600px;">
-            <div class="modal-content">
-                <div class="modal-header bg-primary">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-                    <h4 class="modal-title">
-                        <span id="lblAddTitle" style="font-weight: bold">修改任务名：</span>
-                    </h4>
-                </div>
-                <form id="updateForm" data-toggle="validator">
-                    <div class="modal-body">
-                        <div class="row-fluid">
-
-                            <div class="row">
-                                <div class="col-sm-8">
-                                    <div class="form-group">
-                                        <label class="control-label">
-                                            任务名：
-                                        </label>
-                                        <input class="form-control indent" id="oldotuname" name="oldotuname" readonly="readonly" >
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-8" style="display: none;" >
-                                    <div class="form-group">
-                                        <label class="control-label">
-                                            ID：
-                                        </label>
-                                        <input class="form-control indent" id="otuId" name="otuId" readonly="readonly" >
-                                    </div>
-                                </div>
-
-
-                                <div class="col-sm-8">
-                                    <div class="form-group">
-                                        <label class="control-label">
-                                            新的任务名: </label>
-                                        <input class="form-control indent" name="newotuname" id="newotuname
-" >
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                    <div class="modal-footer bg-info">
-                        <button type="submit" class="btn blue" onclick="sureUpdate()">确定</button>
-                        <button type="button" class="btn green" data-dismiss="modal">取消</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>*@
-
     <div id="rest" class="modal fade modal-margin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog" style="width: 1000px;">
             <div class="modal-content">
                 <div class="modal-header bg-primary">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
                     <h4 class="modal-title">
-                        <span id="lblAddTitle" style="font-weight: bold">设置参数：</span>
+                        <span id="lblAddTitle" style="font-weight: bold">重新运行OTU聚类和分类学注释：</span>
                     </h4>
                 </div>
                 <form id="resetForm" data-toggle="validator" class="registration-form form-horizontal">
@@ -156,7 +102,7 @@
 
                             <div class="form-group">
                                 <label class="col-sm-8">
-                                    样品：
+                                    样品信息：
                                 </label>
                                 <div class="col-sm-7 indent">
                                     <input class="form-control" id="samples" name="samples" readonly="readonly" >
@@ -174,7 +120,8 @@
                             </div>
 
                             <div class="form-group">
-                                <h5 style="margin-left: 2em;">Usearch otu cluster and mapping
+                                <label class="col-sm-6">Usearch otu cluster and mapping(OTU聚类和丰度计算参数设置)</label>
+                                <label class="col-sm-1">
                                     <a id="down-1" style="margin-left: 2em">
                                         <i class="fa fa-arrow-down"></i>
                                     </a>
@@ -182,39 +129,39 @@
                                         display: none">
                                         <i class="fa fa-arrow-up"></i>
                                     </a>
-                                </h5>
+                                </label>
                             </div>
 
-                            <div id="set-1" style="display: none">
+                            <div id="set-1" style="display: none" class="indent">
 
 
                                 <div class="form-group" >
-                                    <label class="col-sm-7">
-                                        Usearch 'derep_prefix' command: Specify the minimum sequence length to be included in the output.</label>
+                                    <p class="col-sm-7">
+                                        Usearch 'derep_prefix' command: Specify the minimum sequence length to be included in the output.</p>
                                     <div class="col-sm-6 indent">
                                         <input name="minseqlength" id="minseqlength" class="form-control" />
                                     </div>
                                 </div>
 
                                 <div class="form-group" >
-                                    <label class="col-sm-7">
-                                        Usearch 'cluster_otus' command: Specifies the OTU 'radius' as a percentage, i.e. the minimum difference between an OTU member sequence and the representative sequence of that OTU. Default is 3.0, corresponding to a minimum identity of 97%.</label>
+                                    <p class="col-sm-7">
+                                        Usearch 'cluster_otus' command: Specifies the OTU 'radius' as a percentage, i.e. the minimum difference between an OTU member sequence and the representative sequence of that OTU. Default is 3.0, corresponding to a minimum identity of 97%.</p>
                                     <div class="col-sm-6 indent">
                                         <input name="otu_radius_pct" id="otu_radius_pct" class="form-control" />
                                     </div>
                                 </div>
 
                                 <div class="form-group" >
-                                    <label class="col-sm-7">
-                                        Usearch 'usearch_global' command: Specifies the minimum identity between a query sequence(raw data) and a database sequence(otu representative sequence)</label>
+                                    <p class="col-sm-7">
+                                        Usearch 'usearch_global' command: Specifies the minimum identity between a query sequence(raw data) and a database sequence(otu representative sequence)</p>
                                     <div class="col-sm-6 indent">
                                         <input name="id" id="id" class="form-control" />
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-sm-12">
-                                        cluster_otus(cluster) and usearch_global(mapping) strand:</label>
+                                    <p class="col-sm-7">
+                                        cluster_otus(cluster) and usearch_global(mapping) strand:</p>
                                     <div class="col-sm-6 indent">
                                         <select class="form-control" name="strand" id="strand">
                                             <option value="plus">plus</option>
@@ -226,7 +173,8 @@
                             </div>
 
                             <div class="form-group">
-                                <h5 style="margin-left: 2em;">RDP classifier assign taxonomy
+                                <label class="col-sm-6">RDP classifier assign taxonomy(分类学注释参数设置)</label>
+                                <label class="col-sm-1">
                                     <a id="down-2" style="margin-left: 2em">
                                         <i class="fa fa-arrow-down"></i>
                                     </a>
@@ -234,14 +182,14 @@
                                         display: none">
                                         <i class="fa fa-arrow-up"></i>
                                     </a>
-                                </h5>
+                                </label>
                             </div>
 
-                            <div id="set-2" style="display: none">
+                            <div id="set-2"  class="indent">
 
                                 <div class="form-group">
-                                    <label class="col-sm-12">
-                                        Select Database:</label>
+                                    <p class="col-sm-7">
+                                        Select Database:</p>
                                     <div class="col-sm-6 indent">
                                         <select class="form-control" name="db_1" id="db_1">
                                             <option value="greengenes.16s">greengenes.16s</option>
@@ -261,8 +209,8 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-sm-12">
-                                        Taxon assignment method:</label>
+                                    <p class="col-sm-7">
+                                        Taxon assignment method:</p>
                                     <div class="col-sm-6 indent">
                                         <select class="form-control" name="method_1" onchange="change(this)" id="method_1">
                                             <option value="rdp">RDP Classifier</option>
@@ -274,9 +222,9 @@
 
                                 <div id="rdp-1" style="display: none;">
                                     <div class="form-group" >
-                                        <label class="col-sm-7">
-                                            Minimum confidence to record an assignment, used for rdp method </label>
-                                        <div class="col-sm-6 indent">
+                                        <p class="col-sm-7 indent">
+                                            Minimum confidence to record an assignment, used for rdp method </p>
+                                        <div class="col-sm-6 indent-1">
                                             <input name="c" id="c" class="form-control" />
                                         </div>
                                     </div>
@@ -284,18 +232,18 @@
 
                                 <div id="uclust-1" >
                                     <div class="form-group" >
-                                        <label class="col-sm-7">
-                                            Number of database hits to consider when making an assignment, used for uclust method </label>
-                                        <div class="col-sm-6 indent">
+                                        <p class="col-sm-7 indent">
+                                            Number of database hits to consider when making an assignment, used for uclust method </p>
+                                        <div class="col-sm-6 indent-1">
                                             <input name="uma" id="uma" class="form-control"/>
                                         </div>
                                     </div>
 
 
                                     <div class="form-group" >
-                                        <label class="col-sm-7">
-                                            Minimum percent similarity (expressed as a fraction between 0 and 1) to consider a database match a hit, used for uclust method </label>
-                                        <div class="col-sm-6 indent">
+                                        <p class="col-sm-7 indent">
+                                            Minimum percent similarity (expressed as a fraction between 0 and 1) to consider a database match a hit, used for uclust method </p>
+                                        <div class="col-sm-6 indent-1">
                                             <input name="s" id="s" class="form-control" />
                                         </div>
                                     </div>
@@ -307,7 +255,7 @@
                         </div>
                     </div>
                     <div class="modal-footer bg-info">
-                        <button type="button" class="btn blue" onclick="Running()">确定</button>
+                        <button type="button" class="btn blue" onclick="Running()">运行</button>
                         <button type="button" class="btn green" data-dismiss="modal">取消</button>
                     </div>
                 </form>
@@ -321,7 +269,7 @@
                 <div class="modal-header bg-primary">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
                     <h4 class="modal-title">
-                        <span id="lblAddTitle" style="font-weight: bold">RDP classifier assign taxonomy：</span>
+                        <span id="lblAddTitle" style="font-weight: bold">重新运行分类学注释</span>
                     </h4>
                 </div>
                 <form id="resetRdpForm" data-toggle="validator" class="registration-form form-horizontal">
@@ -380,31 +328,31 @@
                             </div>
 
 
-                            <div id="rdp-2" style="display: none;">
+                            <div id="rdp-2">
                                 <div class="form-group" >
-                                    <label class="col-sm-7">
+                                    <label class="col-sm-7 indent">
                                         Minimum confidence to record an assignment, used for rdp method </label>
-                                    <div class="col-sm-6 indent">
-                                        <input name="rdp_c" id="rdp_c" class="form-control" value="0.7" />
+                                    <div class="col-sm-6 indent-1">
+                                        <input name="rdp_c" id="rdp_c" class="form-control"/>
                                     </div>
                                 </div>
                             </div>
 
                             <div id="uclust-2">
                                 <div class="form-group" >
-                                    <label class="col-sm-7">
+                                    <label class="col-sm-7 indent">
                                         Number of database hits to consider when making an assignment, used for uclust method </label>
-                                    <div class="col-sm-6 indent">
-                                        <input name="rdp_uma" id="rdp_uma" class="form-control" value="3" />
+                                    <div class="col-sm-6 indent-1">
+                                        <input name="rdp_uma" id="rdp_uma" class="form-control" />
                                     </div>
                                 </div>
 
 
                                 <div class="form-group" >
-                                    <label class="col-sm-7">
+                                    <label class="col-sm-7 indent">
                                         Minimum percent similarity (expressed as a fraction between 0 and 1) to consider a database match a hit, used for uclust method </label>
-                                    <div class="col-sm-6 indent">
-                                        <input name="rdp_s" id="rdp_s" class="form-control" value="0.9" />
+                                    <div class="col-sm-6 indent-1">
+                                        <input name="rdp_s" id="rdp_s" class="form-control"/>
                                     </div>
                                 </div>
                             </div>
@@ -413,7 +361,7 @@
 
                     </div>
                     <div class="modal-footer bg-info">
-                        <button type="button" class="btn blue" onclick="RunRdp()">确定</button>
+                        <button type="button" class="btn blue" onclick="RunRdp()">运行</button>
                         <button type="button" class="btn green" data-dismiss="modal">取消</button>
                     </div>
                 </form>
@@ -446,7 +394,7 @@
                 <div class="modal-header bg-primary">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
                     <h4 class="modal-title">
-                        <span id="lblAddTitle" style="font-weight: bold">日志信息：</span>
+                        <span id="lblAddTitle" style="font-weight: bold">OTU Taxon Table：</span>
                         <button type="button" class="btn-remove" data-dismiss="modal" ><i class="fa fa-remove"></i></button>
                     </h4>
                 </div>
@@ -501,10 +449,10 @@
             <div class="modal-content">
                 <div class="modal-header bg-primary">
                     <h4 class="modal-title" align="center" id="title1">
-                        <span id="deleteTitle" style="font-weight: bold">删除任务
+                        <span id="deleteTitle" style="font-weight: bold">请确认是否删除分析结果"
                             <b id="dtask">
 
-                            </b>
+                            </b>"?
                         </span>
                     </h4>
                     <h4 class="modal-title" align="center" id="title2" style="display: none">
@@ -561,32 +509,6 @@
             })
 
             function formValidation() {
-                $('#updateForm').formValidation({
-                    framework: 'bootstrap',
-                    icon: {
-                        valid: 'glyphicon glyphicon-ok',
-                        invalid: 'glyphicon glyphicon-remove',
-                        validating: 'glyphicon glyphicon-refresh'
-                    },
-                    fields: {
-                        newotuname: {
-                            validators: {
-                                notEmpty: {
-                                    message: '不能为空!'
-                                },
-                                different: {
-                                    field: 'oldotuname',
-                                    message: '不能与原任务名相同'
-                                },
-                                remote: {
-                                    type: 'POST',
-                                    url: '@routes.OtuController.checkOtuname(proname)',
-                                    message: '任务名重复，请重新输入'
-                                }
-                            }
-                        }
-                    }
-                });
                 $('#resetForm').formValidation({
                     framework: 'bootstrap',
                     icon: {
@@ -777,6 +699,13 @@
                             $("#strand").val(data.strand);
                             $("#db_1").val(data.db);
                             $("#method_1").val(data.method);
+                            if(data.method == "rdp"){
+                                $("#rdp-1").show();
+                                $("#uclust-1").hide()
+                            }else{
+                                $("#rdp-1").hide();
+                                $("#uclust-1").show()
+                            }
                             $("#c").val(data.c);
                             $("#uma").val(data.uma);
                             $("#s").val(data.s);
@@ -797,6 +726,13 @@
                         $("#rdp_otuname").val(data.otuname);
                         $("#rdp_c").val(data.c);
                         $("#method_2").val(data.method);
+                        if(data.method == "rdp"){
+                            $("#rdp-2").show();
+                            $("#uclust-2").hide()
+                        }else{
+                            $("#rdp-2").hide();
+                            $("#uclust-2").show()
+                        }
                         $("#db_2").val(data.db);
                         $("#rdp_uma").val(data.uma);
                         $("#rdp_s").val(data.s);

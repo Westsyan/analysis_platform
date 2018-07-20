@@ -17,8 +17,6 @@ GET           /back/logout                       controllers.LoginController.log
 
 GET           /back/toIndex                      controllers.LoginController.toIndex(account:String)
 
-GET           /back/index                        controllers.LoginController.index
-
 GET           /project/data                      controllers.SampleController.dataPage(proname:String)
 GET           /project/toDate                    controllers.SampleController.toDate(proname:String)
 GET           /project/home                      controllers.SampleController.home
@@ -85,14 +83,6 @@ GET           /otu/project/deleteAll             controllers.ProjectController.d
 
 GET           /otu/project/selected              controllers.LoginController.selected
 GET           /unix/getDisk                      controllers.LoginController.getDisk
-
-
-GET           /project/toIndex                   controllers.Default.redirect(to = "http://192.168.0.140/")
-GET           /project/toPlatform                controllers.Default.redirect(to = "http://192.168.0.140/project/platformHome")
-
-
-
-
 
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file                      controllers.Assets.at(path="/public", file)

@@ -1,4 +1,4 @@
-@(title: String)(projectName:Seq[String])(content: Html)(implicit session: Session)
+@(title: String)(projectName:Seq[String])(host:String)(content: Html)(implicit session: Session)
 
 <!DOCTYPE html>
 
@@ -51,7 +51,7 @@
 	</head>
 	<body class="page-header-fixed page-quick-sidebar-over-content">
 		<header>
-		@background.header()
+		@background.header(host)
 		</header>
 
 		<div class="page-container">

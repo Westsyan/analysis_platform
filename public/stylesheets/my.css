@@ -811,7 +811,7 @@ button:focus, input[type="submit"] {
 }
 
 .page-footer {
-    background: #333333;
+
     color: #fff;
 }
 .page-footer {
@@ -921,4 +921,16 @@ button:focus, input[type="submit"] {
 }
 .skin-green .pb-text{ color:black }
 
+/* 帮助文档*/
+.helpClass{
+    font-size : 14px;
+    text-indent: 2em;
+}
+.helpIcon{
+    color: black;
+    font-size: 16px;
+}
 
+.helpIcon:hover{
+    color: darkgray;
+}

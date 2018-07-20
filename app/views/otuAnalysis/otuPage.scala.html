@@ -1,5 +1,5 @@
-@(projectName: Seq[String], proname: String)(implicit session: Session)
-@fileupload.main(proname, projectName, proname) {
+@(projectName: Seq[String], proname: String,host:String)(implicit session: Session)
+@fileupload.main("OTU聚类和分类学注释分析", projectName, proname,host) {
 
     <style>
             label {
@@ -56,7 +56,10 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="col-sm-6">Usearch otu cluster and mapping(OTU聚类和丰度计算参数设置):</label>
+                                <label class="col-sm-6">Usearch otu cluster and mapping(OTU聚类和丰度计算参数设置):
+                                    <a onclick="openHelp1()" title="帮助文档" class="helpIcon">
+                                        <i class="fa fa-question-circle-o"></i></a></label>
+                                </label>
                                 <label class="col-sm-1" style="margin-left: -15%">
                                     <a id="down-1" style="margin-left: 2em">
                                         <i class="fa fa-arrow-down"></i>
@@ -72,7 +75,7 @@
 
 
                                 <div class="form-group" >
-                                    <p class="col-sm-5" style="text-indent: 1em;">
+                                    <p class="col-sm-5">
                                         Usearch 'derep_prefix' command: Specify the minimum sequence length to be included in the output.</p>
                                     <div class="col-sm-12 indent-3">
                                         <div class="col-sm-4">
@@ -82,7 +85,7 @@
                                 </div>
 
                                 <div class="form-group" >
-                                    <p class="col-sm-5" style="text-indent: 1em;">
+                                    <p class="col-sm-5">
                                         Usearch 'cluster_otus' command: Specifies the OTU 'radius' as a percentage, i.e. the minimum difference between an OTU member sequence and the representative sequence of that OTU. Default is 3.0, corresponding to a minimum identity of 97%.</p>
                                     <div class="col-sm-12 indent-3">
                                         <div class="col-sm-4">
@@ -92,7 +95,7 @@
                                 </div>
 
                                 <div class="form-group" >
-                                    <p class="col-sm-5" style="text-indent: 1em;">
+                                    <p class="col-sm-5">
                                         Usearch 'usearch_global' command: Specifies the minimum identity between a query sequence(raw data) and a database sequence(otu representative sequence)</p>
                                     <div class="col-sm-12 indent-3">
                                         <div class="col-sm-4">
@@ -102,13 +105,13 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <p class="col-sm-5" style="text-indent: 1em;">
+                                    <p class="col-sm-5">
                                         cluster_otus(cluster) and usearch_global(mapping) strand:</p>
                                     <div class="col-sm-12 indent-3">
                                         <div class="col-sm-4">
                                             <select class="form-control" name="strand">
-                                                <option value="plus" selected>plus</option>
-                                                <option value="both">both</option>
+                                                <option value="plus">plus</option>
+                                                <option value="both" selected>both</option>
                                             </select>
                                         </div>
                                     </div>
@@ -117,37 +120,40 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="col-sm-6">RDP classifier assign taxonomy(分类学注释参数设置):</label>
+                                <label class="col-sm-6">Assign taxonomy(代表序列分类学注释参数设置):
+                                    <a onclick="openHelp2()" title="帮助文档" class="helpIcon">
+                                        <i class="fa fa-question-circle-o"></i></a></label>
+                                </label>
                                 <label class="col-sm-1" style="margin-left: -15%">
-                                    <a id="down-2" style="margin-left: 2em">
+                                    <a id="down-2" style="margin-left: 2em;display: none">
                                         <i class="fa fa-arrow-down"></i>
                                     </a>
                                     <a id="up-2" style="margin-left: 2em;
-                                        display: none">
+                                      ">
                                         <i class="fa fa-arrow-up"></i>
                                     </a>
                                 </label>
                             </div>
 
-                            <div id="set-2" style="display: none" class="indent">
+                            <div id="set-2" class="indent">
 
                                 <div class="form-group">
-                                    <p class="col-sm-5" style="text-indent: 1em;">
+                                    <p class="col-sm-5">
                                         Select Database:</p>
                                     <div class="col-sm-12 indent-3">
                                         <div class="col-sm-4">
-                                            <select class="form-control" name="db">
+                                           <select class="form-control" name="db">
                                                 <option value="greengenes.16s">greengenes.16s</option>
                                                 <option value="greengenes.16s_archaea">greengenes.16s_archaea</option>
                                                 <option value="greengenes.16s_bacteria">greengenes.16s_bacteria</option>
                                                 <option value="rdp.16s">rdp.16s</option>
                                                 <option value="rdp.16s_archaea">rdp.16s_archaea</option>
                                                 <option value="rdp.16s_bacteria">rdp.16s_bacteria</option>
+                                                <option value="silva">silva</option>
                                                 <option value="silva.16s">silva.16s</option>
                                                 <option value="silva.16s_archaea">silva.16s_archaea</option>
-                                                <option value="silva.16s_bacteria">silva.16s_bacteria</option>
+                                                <option value="silva.16s_bacteria" selected>silva.16s_bacteria</option>
                                                 <option value="silva.18s_eukaryota">silva.18s_eukaryota</option>
-                                                <option value="silva">silva</option>
                                                 <option value="unite.its_fungi">unite.its_fungi</option>
                                             </select>
                                         </div>
@@ -156,7 +162,7 @@
 
 
                                 <div class="form-group">
-                                    <p class="col-sm-5" style="text-indent: 1em;">
+                                    <p class="col-sm-5">
                                         Taxon assignment method:</p>
                                     <div class="col-sm-12 indent-3">
                                         <div class="col-sm-4">
@@ -169,10 +175,10 @@
                                 </div>
 
 
-                                <div id="rdp-1" style="display: none;">
-                                    <p class="col-sm-5" style="text-indent: 1em;">
-                                        <label class="col-sm-7">
-                                            Minimum confidence to record an assignment, used for rdp method </label>
+                                <div id="rdp-1" style="display: none;" class="indent">
+                                    <p class="col-sm-5">
+                                        <p class="col-sm-12">
+                                            Minimum confidence to record an assignment, used for rdp method </p>
                                         <div class="col-sm-12 indent-3">
                                             <div class="col-sm-4">
                                                 <input name="c" id="c" class="form-control" value="0.7" />
@@ -181,9 +187,9 @@
                                     </p>
                                 </div>
 
-                                <div id="uclust-1" >
+                                <div id="uclust-1" class="indent" >
                                     <div class="form-group" >
-                                        <p class="col-sm-5" style="text-indent: 1em;">
+                                        <p class="col-sm-5">
                                             Number of database hits to consider when making an assignment, used for uclust method </p>
                                         <div class="col-sm-12 indent-3">
                                             <div class="col-sm-4">
@@ -194,7 +200,7 @@
 
 
                                     <div class="form-group" >
-                                        <p class="col-sm-5" style="text-indent: 1em;">
+                                        <p class="col-sm-5">
                                             Minimum percent similarity (expressed as a fraction between 0 and 1) to consider a database match a hit, used for uclust method </p>
                                         <div class="col-sm-12 indent-3">
                                             <div class="col-sm-4">
@@ -222,6 +228,90 @@
         </div>
     </div>
 
+    <div id="helpShow1" class="modal fade modal-margin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width: 1000px;">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                    <h4 class="modal-title">
+                        <span id="lblAddTitle" style="font-weight: bold">帮助文档：</span>
+                        <button type="button" class="btn-remove" data-dismiss="modal" ><i class="fa fa-remove"></i></button>
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row-fluid" id="logInfo">
+                        <p class="helpClass">分析模块，输入每个样品经过Trimmomatic剪切和过滤、FLASH拼接后的FASTA序列文件，运行得到OTU Table文件和OTU代表序列文件。</p>
+                        <p class="helpClass">OTU（Operational Taxonomic Units）是在系统发生学或群体遗传学研究中，为了便于进行分析，人为给某一个分类单元（品系，属，种、分组等）设置的同一标志。要了解一个样本测序结果中的菌种、菌属等数目信息，就需要对序列进行归类操作（cluster）。通过归类操作，将序列按照彼此的相似性分归为许多小组，一个小组就是一个OTU。可根据不同的相似度水平，对所有序列进行OTU划分，通常在97%的相似水平下的OTU进行生物信息统计分析。</p>
+                        <p class="helpClass">分析模块封装了Usearch软件，具体分析步骤如下所示：</p>
+                        <p class="helpClass">1. Usearch v7.0.1090 command 'derep_prefix'，对优化序列提取非重复序列，便于降低分析中间过程冗余计算量。</p>
+                        <p class="helpClass">2. Usearch v7.0.1090 command 'sortbysize'，排序，并去除没有重复的单序列。</p>
+                        <p class="helpClass">3. Usearch v7.0.1090 command 'cluster_otus'，默认情况下，按照97%相似性对非重复序列（不含单序列）进行OTU聚类，在聚类过程中去除嵌合体，得到OTU的代表序列。</p>
+                        <p class="helpClass">4. Usearch v7.0.1090 command 'usearch_global'，默认情况下，将所有优化序列map至OTU代表序列，选出与OTU代表序列相似性在97%以上的序列，生成OTU表格。
+                        </p>
+                        <br>
+                        <p class="helpClass">输入：</p>
+                        <br>
+                        <p class="helpClass">Trimmomatic剪切和过滤、FLASH拼接后的FASTA序列文件。</p>
+                        <p class="helpClass">注：根据需要，在参数设置界面，动态增加或减少输入样品。</p>
+                        <br>
+                        <p class="helpClass">输出：</p>
+                        <br>
+                        <p class="helpClass">1、OTU Table表格文件</p>
+                        <p class="helpClass">OTU ID     10     11     12</p>
+                        <p class="helpClass">OTU1        10842       7265         11259</p>
+                        <p class="helpClass">OTU2        6660         5505         7994</p>
+                        <p class="helpClass">OTU3        3212         1769         7230</p>
+                        <p class="helpClass">OTU4        4143         2548         2328</p>
+                        <br>
+                        <p class="helpClass">2、OTU代表序列文件</p>
+                        <p class="helpClass">>OTU1</p>
+                        <p class="helpClass">GTGGGGAATATTGGACAATGGGCGCAAGCCTGATCCAGCCATGCCG ……</p>
+                        <p class="helpClass">>OTU2</p>
+                        <p class="helpClass">GTAGGAATCTTCGGCAATGGACGAAAGTCTGACCGAGCAACGCCG ……</p>
+                        <p class="helpClass">>OTU3</p>
+                        <p class="helpClass">GTGGGGAATATTGGACAATGGGCGAAAGCCTGATCCAGCAATGCCG ……</p>
+                        <p class="helpClass">……</p>
+                        <br>
+                        <p class="helpClass">相关文献如下所示：</p>
+                        <p class="helpClass">1. USEARCH and UCLUST algorithms: Edgar,RC (2010) Search and clustering orders of magnitude faster than BLAST, Bioinformatics 26(19), 2460-2461.
+                        </p>
+                        <p class="helpClass">2. UPARSE algorithm: Edgar, R.C. (2013) UPARSE: Highly accurate OTU sequences from microbial amplicon reads, Nature Methods.</p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="helpShow2" class="modal fade modal-margin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width: 1000px;">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                    <h4 class="modal-title">
+                        <span id="lblAddTitle" style="font-weight: bold">帮助文档：</span>
+                        <button type="button" class="btn-remove" data-dismiss="modal" ><i class="fa fa-remove"></i></button>
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row-fluid" id="logInfo">
+                        <p class="helpClass">功能简介：</p>
+                        <p class="helpClass">分析模块，根据输入的OTU代表序列，和分类学数据库比对，从而得到对应OTU的分类学信息。引用了QIIME 1.9.1的assign_taxonomy.py脚本，有两种注释方法可以选择，分别为：RDP Classifier和Uclust consensus taxonomy assigner。</p>
+                        <br>
+                        <p class="helpClass">两种注释方法详细介绍:</p>
+                        <p class="helpClass">1. Assignment with the RDP Classifier: The RDP Classifier (Wang, Garrity, Tiedje, &amp; Cole, 2007) assigns taxonomies using Naive Bayes classification.</p>
+                        <p class="helpClass">2. Assign taxonomy with the uclust consensus taxonomy assigner: Perform database search with uclust to retrive up to uclust_max_accepts hits for each query sequence. Then assign the most specific taxonomic label that is associated with at least min_consensus_fraction of the hits.</p>
+                        <br>
+                        <p class="helpClass">相关文献：</p>
+                        <p class="helpClass">1. QIIME allows analysis of high-throughput community sequencing data. J Gregory Caporaso, Justin Kuczynski, Jesse Stombaugh, Kyle Bittinger, Frederic D Bushman, Elizabeth K Costello, Noah Fierer, Antonio Gonzalez Pena, Julia K Goodrich, Jeffrey I Gordon, Gavin A Huttley, Scott T Kelley, Dan Knights, Jeremy E Koenig, Ruth E Ley, Catherine A Lozupone, Daniel McDonald, Brian D Muegge, Meg Pirrung, Jens Reeder, Joel R Sevinsky, Peter J Turnbaugh, William A Walters, Jeremy Widmann, Tanya Yatsunenko, Jesse Zaneveld and Rob Knight; Nature Methods, 2010; doi:10.1038/nmeth.f.303</p>
+                        <p class="helpClass">2. Wang Q, Garrity GM, Tiedje JM, Cole JR. 2007. Naive Bayesian classifier for rapid assignment of rRNA sequences into the new bacterial taxonomy. Appl Environ Microb 73(16): 5261-5267.</p>
+                        <p class="helpClass">3. Edgar RC. 2010. Search and clustering orders of magnitude faster than BLAST. Bioinformatics 26(19):2460-2461.</p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
 
@@ -238,6 +328,14 @@
                 }
             });
 
+
+            function openHelp1() {
+                $("#helpShow1").modal("show")
+            }
+
+            function openHelp2() {
+                $("#helpShow2").modal("show")
+            }
 
             $(function () {
 
@@ -290,7 +388,7 @@
                         'sample[]': {
                             validators: {
                                 callback: {
-                                    message: '请至少选择一个样品表型！',
+                                    message: '请至少选择一个样品！',
                                     callback: function (value, validator, $field) {
                                         // Get the selected options
                                         var options = validator.getFieldElements('sample[]').val();

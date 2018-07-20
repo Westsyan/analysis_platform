@@ -37,8 +37,9 @@ class ProjectController @Inject()(admindao: adminDao, projectdao: projectDao, sa
     val project = ProjectRow(0, accId, projectname, description, date, 0)
     Await.result(projectdao.addProject(Seq(project)), Duration.Inf)
     val proId = Await.result(projectdao.getIdByProjectname(accId, projectname), Duration.Inf)
-    new File(Utils.path + "/" + accId + "/" + proId).mkdirs()
-    println(project)
+    val path = Utils.path + "/" + accId + "/" + proId
+    new File(path + "/data").mkdirs()
+    new File(path + "/otu").mkdirs()
     Ok(Json.obj("valid" -> "true"))
   }
 
@@ -148,10 +149,14 @@ class ProjectController @Inject()(admindao: adminDao, projectdao: projectDao, sa
   }
 
   def deleteAll(id:Int)= Action{implicit request=>
-    val run = Future{
-      Await.result(otudao.deleteByUserid(id),Duration.Inf)
-      Await.result(sampledao.deleteByUserid(id),Duration.Inf)
-      Await.result(projectdao.deleteByUserid(id),Duration.Inf)
+    val user = request.session.get("admin").getOrElse("user")
+    val userid = request.session.get("id").getOrElse("0")
+    if(user == "admin" && userid == "1") {
+      val run = Future {
+        Await.result(otudao.deleteByUserid(id), Duration.Inf)
+        Await.result(sampledao.deleteByUserid(id), Duration.Inf)
+        Await.result(projectdao.deleteByUserid(id), Duration.Inf)
+      }
     }
     val json = Json.toJson("success")
     request.queryString.get("callback").flatMap(_.headOption) match {

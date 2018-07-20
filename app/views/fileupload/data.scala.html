@@ -1,5 +1,5 @@
-@(projectName: Seq[String], proname: String )(implicit session: Session)
-@fileupload.main(proname, projectName, proname) {
+@(projectName: Seq[String], proname: String ,host:String)(implicit session: Session)
+@fileupload.main("样品管理", projectName, proname,host) {
 
     <style>
             .update {
@@ -68,10 +68,10 @@
                             <thead>
                                 <tr>
                                     <th data-field="sample" data-sortable="true" id="sample">样品名</th>
-                                    <th data-field="seqs" data-sortable="true" id="seqs">有效序列数</th>
-                                    <th data-field="createdate" data-sortable="true" id="createdata">添加时间</th>
+                                    <th data-field="seqs" data-sortable="true" id="seqs">有效序列条数</th>
+                                    <th data-field="createdate" data-sortable="true" id="createdata">创建时间</th>
                                     <th data-field="state" data-sortable="true" id="state">运行状态</th>
-                                    <th data-field="results" data-sortable="false" id="results">下载文件</th>
+                                    <th data-field="results" data-sortable="false" id="results">文件一览</th>
                                     <th data-field="operation" data-sortable="false" id="operation">操作</th>
                                 </tr>
                             </thead>
@@ -96,14 +96,6 @@
                         <div class="row-fluid">
 
                             <div class="row">
-                                <div class="col-sm-8">
-                                    <div class="form-group">
-                                        <label class="control-label">
-                                            样品名：
-                                        </label>
-                                        <input class="form-control indent" id="samplename" name="samplename" readonly="readonly" >
-                                    </div>
-                                </div>
 
                                 <div class="col-sm-8" style="display: none;" >
                                     <div class="form-group">
@@ -141,7 +133,7 @@
                 <div class="modal-header bg-primary">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
                     <h4 class="modal-title">
-                        <span id="lblAddTitle" style="font-weight: bold">设置参数：</span>
+                        <span id="lblAddTitle" style="font-weight: bold">重新进行质控和拼接：</span>
                     </h4>
                 </div>
                 <form id="resetForm" data-toggle="validator" class="registration-form form-horizontal">
@@ -151,7 +143,7 @@
                         </div>
                     </div>
                     <div class="modal-footer bg-info">
-                        <button type="button" class="btn blue" onclick="Running()">确定</button>
+                        <button type="button" class="btn blue" onclick="Running()">运行</button>
                         <button type="button" class="btn green" data-dismiss="modal">取消</button>
                     </div>
                 </form>
@@ -184,10 +176,10 @@
             <div class="modal-content">
                 <div class="modal-header bg-primary">
                     <h4 class="modal-title" align="center" id="title1">
-                        <span id="deleteTitle" style="font-weight: bold">删除样品
+                        <span id="deleteTitle" style="font-weight: bold">请确认是否删除样品"
                         <b id="dsample">
 
-                        </b>
+                        </b>"?
                         </span>
                     </h4>
                     <h4 class="modal-title" align="center" id="title2" style="display: none">
@@ -248,10 +240,6 @@
                                 notEmpty: {
                                     message: '不能为空!'
                                 },
-                                different: {
-                                    field: 'samplename',
-                                    message: '不能与原样品名相同'
-                                },
                                 regexp: {
                                     regexp: '^[A-Za-z0-9"_"]{1,20}$',
                                     message: '请不要输入特殊字符！'
@@ -270,8 +258,8 @@
             function updateSample(obj) {
                 var name = obj.value;
                 var id = obj.id;
-                $("#samplename").empty();
-                $("#samplename").val(name);
+                $("#newsample").empty();
+                $("#newsample").val(name);
                 $("#sampleId").val(id);
                 $("#update").modal("show")
             }

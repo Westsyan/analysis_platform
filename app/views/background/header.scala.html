@@ -1,16 +1,16 @@
-@()(implicit session: Session)
+@(host:String)(implicit session: Session)
 <style>
     #drop:hover,#new:hover,#logout:hover {
         background-color: #F0F0F0;
     }
 </style>
 
-<div class="page-header navbar navbar-fixed-top" style="background-color: #239FFD">
+<div class="page-header navbar navbar-fixed-top">
         <!-- BEGIN HEADER INNER -->
     <div class="page-header-inner">
             <!-- BEGIN LOGO -->
         <div class="page-logo">
-            <img src="/assets/images/logo-yingfei.gif"  height="43px"/>
+
 
             <div class="menu-toggler sidebar-toggler hide">
 
@@ -19,8 +19,8 @@
         <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse">
         </a>
         <div class="top-menu" >
-            <ul class="nav navbar-nav pull-right" style="background-color: #239FFD">
-                <li>
+            <ul class="nav navbar-nav pull-right">
+@*                <li>
                     <div>
                         <div class="process-bar skin-green">
                             <div class="pb-wrapper">
@@ -34,27 +34,27 @@
                         <div class="disk-text"></div>
                     </div>
                 </li>
-                <li style="float: left">
-                </li>
+*@
+
                 <li class="dropdown dropdown-user" >
 
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true"
-                        style="height: 40px;">
-                        <span class="username username-hide-on-mobile" style="margin-top: -10px">
+                        style="height: 46px;">
+                        <span class="username username-hide-on-mobile" style="margin-top: -4px;font-size: 13px">
                             @session.get("user") </span>
                         <i class="fa fa-angle-down"></i>
                     </a>
-                    <ul class="dropdown-menu" style="margin-top: 0px;">
+                    <ul class="dropdown-menu" style="margin-top: 6px;">
                         <li>
 
                         </li>
                         <li id="drop">
-                            <a href="/project/toPlatform" id="logout"
+                            <a href="http://@host/project/platformHome" id="logout"
                             style="font-size: 14px;margin-left: 1em;color: #888888;">
-                                <i class="fa fa-home"></i> &nbsp; 退出到主页面 </a>
+                                <i class="fa fa-home"></i> &nbsp; 回到首页 </a>
                         </li>
                         <li id="drop">
-                            <a href="/project/toIndex" id="logout"
+                            <a href="http://@host/" id="logout"
                             style="font-size: 14px;margin-left: 1em;color: #888888;">
                                 <i class="fa fa-user"></i> &nbsp; 退出登录 </a>
                         </li>

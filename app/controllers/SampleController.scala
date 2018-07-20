@@ -29,7 +29,7 @@ class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sam
   def enterHome(projectname: String): Action[AnyContent] = Action { implicit request =>
     val userId = request.session.get("id").head.toInt
     val projectId = Await.result(projectdao.getIdByProjectname(userId, projectname), Duration.Inf)
-    val data = new File(Utils.path + "/" + userId + "/" + projectId)
+    val data = new File(Utils.path + "/" + userId + "/" + projectId + "/data")
     val allName = Await.result(projectdao.getAllProject(userId), Duration.Inf)
     if (data.listFiles().size < 2) {
       Redirect(routes.SampleController.loadData(projectname))
@@ -41,14 +41,14 @@ class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sam
   def loadData(proname: String): Action[AnyContent] = Action { implicit request =>
     val userId = request.session.get("id").head.toInt
     val allName = Await.result(projectdao.getAllProject(userId), Duration.Inf)
-    Ok(views.html.fileupload.uploadFile(allName, proname))
+    Ok(views.html.fileupload.uploadFile(allName, proname,request.domain))
   }
 
   def home = Action { implicit request =>
     val userId = request.session.get("id").head.toInt
     val all = Await.result(projectdao.getAll(userId), Duration.Inf)
     val projectname = all.map(_.projectname)
-    Ok(views.html.background.home(all, projectname))
+    Ok(views.html.background.home(all, projectname,request.domain))
   }
 
   case class paraData(proname: String, sample: String, encondingType: String, stepMethod: String, adapter: Option[String],
@@ -104,6 +104,7 @@ class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sam
       val accumulator: Accumulator[ByteString, IOResult] = Accumulator(fileSink)
       accumulator.map {
         case IOResult(count, status) =>
+          println(status)
           FilePart(partName, filename, contentType, file)
       }
   }
@@ -298,7 +299,7 @@ class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sam
   def dataPage(proname: String) = Action { implicit request =>
     val id = getUserIdAndProId(request.session, proname)
     val allName = Await.result(projectdao.getAllProject(id._1), Duration.Inf)
-    Ok(views.html.fileupload.data(allName, proname))
+    Ok(views.html.fileupload.data(allName, proname,request.domain))
   }
 
   def isRunCmd(sample: String, proname: String): Action[AnyContent] = Action.async { implicit request =>
@@ -483,7 +484,7 @@ class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sam
         s"""
            |<a class="fastq" href="/project/download?id=${x.id}&code=1" title="原始数据"><b>${x.sample}</b><b>_1.fastq</b></a>,
            |<a class="fastq" href="/project/download?id=${x.id}&code=2" title="原始数据"><b>${x.sample}</b><b>_2.fastq</b></a>,
-           |<a class="fastq" href="/project/download?id=${x.id}&code=3" title="拆分结果"><b>${x.sample}</b><b>.fasta</b></a>
+           |<a class="fastq" href="/project/download?id=${x.id}&code=3" title="拼接结果"><b>${x.sample}</b><b>.fasta</b></a>
            """.stripMargin
       } else {
         ""
@@ -491,7 +492,7 @@ class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sam
       val operation = if (x.state == 1) {
         s"""
            |  <button class="update" onclick="updateSample(this)" value="${x.sample}" id="${x.id}" title="修改样品名"><i class="fa fa-pencil"></i></button>
-           |  <button class="update" onclick="restart(this)" value="${x.id}" title="重新运行"><i class="fa fa-repeat"></i></button>
+           |  <button class="update" onclick="restart(this)" value="${x.id}" title="重新进行质控和拼接"><i class="fa fa-repeat"></i></button>
            |  <button class="update" onclick="openLog(this)" value="${x.id}" title="查看日志"><i class="fa fa-file-text"></i></button>
            |  <button class="delete" onclick="openDelete(this)" value="${x.sample}" id="${x.id}" title="删除样品"><i class="fa fa-trash"></i></button>
            """.stripMargin
