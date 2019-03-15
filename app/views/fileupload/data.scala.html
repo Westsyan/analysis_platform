@@ -349,7 +349,7 @@
 
             function tableInformation() {
                 $.ajax({
-                    url: "@routes.SampleController.getAllSample(proname)",
+                    url: "@routes.SampleController.getAllSample("1")",
                     type: "post",
                     dataType: "json",
                     success: function (data) {
@@ -360,7 +360,7 @@
 
             function updateTable() {
                 $.ajax({
-                    url: "@routes.SampleController.getAllSample(proname)",
+                    url: "@routes.SampleController.getAllSample("1")",
                     type: "post",
                     dataType: "json",
                     success: function (data) {

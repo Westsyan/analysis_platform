@@ -102,10 +102,10 @@ class LoginController @Inject()(admindao: adminDao,projectdao:projectDao,sampled
   }
 
   def getDisk = Action { implicit request =>
-    val sh = "sh /mnt/sdb/platform/getDisk.sh"
+    val sh = s"sh ${Utils.allpath}/getDisk.sh"
     val command = new ExecCommand
     command.exec(sh)
-    val buffer = FileUtils.readLines(new File("/mnt/sdb/platform/disk.txt")).asScala
+    val buffer = FileUtils.readLines(new File(s"${Utils.allpath}/disk.txt")).asScala
     val head = buffer.head.split(" ")
     val all = head.head
     val alls = all.split("T").head.toDouble

@@ -91,7 +91,9 @@ object Utils {
   }
 
   val windowsPath = "F:/analysis_data"
-  val linuxPath = "/mnt/sdb/platform/otu_platform"
+//  val linuxPath = "/mnt/sdb/platform/otu_platform"
+  val allpath = "/home/user/platform"
+  val linuxPath = allpath + "/otu_platform"
   val path = {
     if (new File(windowsPath).exists()) windowsPath+"/data" else linuxPath+"/data"
   }

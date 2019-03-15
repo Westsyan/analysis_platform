@@ -137,7 +137,7 @@ class SampleController @Inject()(admindao: adminDao, projectdao: projectDao, sam
         val out2 = outPath + "/raw.data_2.fastq"
         getFastq(in1, out1, name1)
         getFastq(in2, out2, name2)
-        val deploy = mutable.Buffer(proname, type1, paradata.stepMethod, paradata.adapter.get, paradata.seed_mismatches.getOrElse(2),
+        val deploy = mutable.Buffer(row.id, type1, paradata.stepMethod, paradata.adapter.get, paradata.seed_mismatches.getOrElse(2),
           paradata.palindrome_clip_threshold.getOrElse(30), paradata.simple_clip_threshold.getOrElse(10), paradata.trimMethod,
           paradata.window_size.getOrElse(50), paradata.required_quality.getOrElse(20), paradata.minlenMethod, paradata.minlen.getOrElse(50),
           paradata.leadingMethod, paradata.leading.getOrElse(3), paradata.trailingMethod, paradata.trailing.getOrElse(3),
